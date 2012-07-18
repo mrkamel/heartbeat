@@ -6,7 +6,7 @@ require "logger"
 
 require File.expand_path("../lib/failover_ip", __FILE__)
 
-config = YAML.load(File.read(File.expand_path("../../config/config.yml", __FILE__)))
+config = YAML.load(File.read(File.expand_path("../../config/heartbeat.yml", __FILE__)))
 
 # Keep 3 logfiles with up to 10 MB max.
 
