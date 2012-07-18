@@ -23,7 +23,7 @@ current active server ip and looks up the ip in the list you've configured.
 Heartbeat then pings the next ip from the list until it can reach an ip or has
 to give up, because there are no remaining ips Heartbeat could try to reach.
 The order of the ip addresses within the config file determines which ip is
-tried our next. When the last ip of the list is reached, the first one is
+tried out next. When the last ip of the list is reached, the first one is
 tried.
 
 After Heartbeat switched to another active server ip by using Hetzner's API,
@@ -59,7 +59,7 @@ $ /var/lib/gems/1.8/bin/bundle
 </pre>
 
 To configure the Hetzner API access, the failover ip as well as your server's
-ip addresses, edit config/config.yml
+ip addresses, edit config/heartbeat.yml
 
 <pre>
 base_url: https://username:password@robot-ws.your-server.de
@@ -72,7 +72,7 @@ ips:
 </pre>
 
 In the future, Heartbeat will provide an init script for Debian you can use to
-start Heartbeat at boot time. However, you have to symlink to it yourself.  It
+start Heartbeat at boot time. However, you have to symlink to it yourself. It
 is *important* to actually symlink to it. Otherwise, the init script can't find
 the location of your Heartbeat installation.
 
