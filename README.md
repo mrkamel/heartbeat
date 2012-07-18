@@ -8,6 +8,11 @@ Failover IPs, please check
 
 http://wiki.hetzner.de/index.php/Robot_Webservice#POST_.2Ffailover.2F.3Cfailover-ip.3E
 
+## Motivation
+
+There are plenty of HA tools out there. However, i thought (and think!) they
+are too heavy-weight for this rather simple task. Thus, i wrote Heartbeat.
+
 ## Current State
 
 This is an early alpha. Simply don't use it yet!
@@ -17,6 +22,9 @@ This is an early alpha. Simply don't use it yet!
 A few words about Heartbeat's behaviour. Every 30 seconds, Heartbeat sends a
 ping to the Hetzner Failover IP. If Heartbeat does not receive an answer, it
 assumes that the server behind the Failover IP is down.
+
+Since, Heartbeat uses plain-old ping's, be sure you can ping your servers
+before using Heartbeat!
 
 When the Failover IP is down, Heartbeat will ask the Hetzner API for the
 current active server ip and looks up the ip in the list you've configured.

@@ -1,4 +1,6 @@
 
+# Set your username and password to access the Hetzner API.
+
 base_url: https://username:password@robot-ws.your-server.de
 
 failover_ip: 0.0.0.0
