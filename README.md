@@ -15,15 +15,15 @@ This is an early alpha. Simply don't use it yet!
 ## Heartbeat's Behaviour
 
 A few words about Heartbeat's behaviour. Every 30 seconds, Heartbeat sends a
-ping. If Heartbeat does not receive an answer, it assumes that the server is
-down.
+ping to the Hetzner Failover IP. If Heartbeat does not receive an answer, it
+assumes that the server behind the Failover IP is down.
 
-When the failover ip is down, Heartbeat will ask the Hetzner API for the
+When the Failover IP is down, Heartbeat will ask the Hetzner API for the
 current active server ip and looks up the ip in the list you've configured.
-Heartbeat then pings the next ip from the list of ips until it can reach an ip
-or has to give up, because there are no remaining ips Heartbeat could try to
-reach. The order of the ip addresses within the config file determines which ip
-is tried our next. When the last ip of the list is reached, the first one is
+Heartbeat then pings the next ip from the list until it can reach an ip or has
+to give up, because there are no remaining ips Heartbeat could try to reach.
+The order of the ip addresses within the config file determines which ip is
+tried our next. When the last ip of the list is reached, the first one is
 tried.
 
 After Heartbeat switched to another active server ip by using Hetzner's API,
