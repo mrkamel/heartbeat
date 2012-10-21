@@ -40,18 +40,18 @@ do_stop()
 
 case "$1" in
   start)
-  do_start
+    do_start
   ;;
   stop)
-  do_stop
+    do_stop
   ;;
   restart|force-reload)
-  do_stop
-  do_start
+    do_stop
+    do_start
   ;;
   *)
-  echo "Usage: heatbeat {start|stop|restart}" >&2
-  exit 3
+    echo "Usage: heatbeat {start|stop|restart}" >&2
+    exit 3
   ;;
 esac
 
