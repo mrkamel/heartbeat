@@ -79,10 +79,10 @@ ips:
   - 2.2.2.2
 </pre>
 
-In the future, Heartbeat will provide an init script for Debian you can use to
-start Heartbeat at boot time. However, you have to symlink to it yourself. It
-is *important* to actually symlink to it. Otherwise, the init script can't find
-the location of your Heartbeat installation.
+Heartbeat provides an init script for Debian you can use to start Heartbeat at
+boot time. However, you have to symlink to it yourself. It is *important* to
+actually symlink to it. Otherwise, the init script can't find the location of
+your Heartbeat installation.
 
 <pre>
 $ cd /etc/init.d

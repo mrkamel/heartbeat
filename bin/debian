@@ -1,0 +1,58 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          heartbeat
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Heartbeat initscript
+# Description:       This file starts and stops the heartbeat daemon.
+### END INIT INFO
+
+SCRIPT_PATH=`/bin/readlink -f "$0"`
+BASE_PATH=`/usr/bin/dirname "$SCRIPT_PATH"`
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+HEARTBEAT=$BASE_PATH/heartbeat
+PIDFILE=/var/run/heartbeat.pid
+
+[ -x "$HEARTBEAT" ] || exit 0
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+do_start()
+{
+  echo "Starting heartbeat."
+
+	start-stop-daemon --background --start --quiet --pidfile $PIDFILE --make-pidfile --exec $HEARTBEAT
+}
+
+do_stop()
+{
+  echo "Stopping heartbeat."
+
+	start-stop-daemon --stop --quiet --pidfile $PIDFILE
+
+	rm -f $PIDFILE
+}
+
+case "$1" in
+  start)
+	do_start
+	;;
+  stop)
+	do_stop
+	;;
+  restart|force-reload)
+	do_stop
+  do_start
+	;;
+  *)
+	echo "Usage: heatbeat {start|stop|restart}" >&2
+	exit 3
+	;;
+esac
+
+:

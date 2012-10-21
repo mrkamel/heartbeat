@@ -4,7 +4,7 @@ require "rubygems"
 require "bundler/setup"
 require "logger"
 
-require File.expand_path("../lib/failover_ip", __FILE__)
+require File.expand_path("../../lib/failover_ip", __FILE__)
 
 config = YAML.load(File.read(File.expand_path("../../config/heartbeat.yml", __FILE__)))
 

@@ -17,7 +17,7 @@ class FailoverIp
   end
 
   def current_ip
-    # JSON.parse(RestClient.get("https://#{base_url}/failover/#{failover_ip}"))["failover"]["active_server_ip"]
+    JSON.parse(RestClient.get("https://#{base_url}/failover/#{failover_ip}"))["failover"]["active_server_ip"]
   rescue Exception => e
     logger.error "Unable to retrieve the active server ip."
 
@@ -38,6 +38,8 @@ class FailoverIp
 
   def switch_ips
     if switch_to = next_ip
+      logger.info "switching to #{switch_to}."
+
       # RestClient.post("https://#{base_url}/failover/#{failover_ip}", :active_server_ip => switch_to)
 
       return true
