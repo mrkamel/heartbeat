@@ -50,7 +50,7 @@ case "$1" in
     do_start
   ;;
   *)
-    echo "Usage: heatbeat {start|stop|restart}" >&2
+    echo "Usage: heatbeat {start|stop|restart}"
     exit 3
   ;;
 esac
