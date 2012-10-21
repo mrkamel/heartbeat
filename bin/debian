@@ -26,33 +26,33 @@ do_start()
 {
   echo "Starting heartbeat."
 
-	start-stop-daemon --background --start --quiet --pidfile $PIDFILE --make-pidfile --exec $HEARTBEAT
+  start-stop-daemon --background --start --quiet --pidfile $PIDFILE --make-pidfile --exec $HEARTBEAT
 }
 
 do_stop()
 {
   echo "Stopping heartbeat."
 
-	start-stop-daemon --stop --quiet --pidfile $PIDFILE
+  start-stop-daemon --stop --quiet --pidfile $PIDFILE
 
-	rm -f $PIDFILE
+  rm -f $PIDFILE
 }
 
 case "$1" in
   start)
-	do_start
-	;;
-  stop)
-	do_stop
-	;;
-  restart|force-reload)
-	do_stop
   do_start
-	;;
+  ;;
+  stop)
+  do_stop
+  ;;
+  restart|force-reload)
+  do_stop
+  do_start
+  ;;
   *)
-	echo "Usage: heatbeat {start|stop|restart}" >&2
-	exit 3
-	;;
+  echo "Usage: heatbeat {start|stop|restart}" >&2
+  exit 3
+  ;;
 esac
 
 :
