@@ -10,7 +10,7 @@ config = YAML.load(File.read(File.expand_path("../../config/heartbeat.yml", __FI
 
 # Keep 3 logfiles with up to 10 MB max.
 
-logger = Logger.new(File.expand_path("../../log/heartbeat.log", __FILE__), 3, 10_485_760)
+$logger = Logger.new(File.expand_path("../../log/heartbeat.log", __FILE__), 3, 10_485_760)
 
-FailoverIp.new(logger, config["base_url"], config["failover_ip"], config["ips"]).monitor
+FailoverIp.new(config["base_url"], config["failover_ip"], config["ips"]).monitor
 
