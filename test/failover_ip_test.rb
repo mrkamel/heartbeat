@@ -3,7 +3,6 @@ $:.unshift File.expand_path("../..", __FILE__)
 
 require "test/test_helper"
 require "stringio"
-
 require "lib/failover_ip"
 
 class FailoverIpTest < Test::Unit::TestCase
@@ -41,11 +40,19 @@ class FailoverIpTest < Test::Unit::TestCase
   end
 
   def test_current_ip
-    # Can't be tested.
+    setup_current_ip "1.1.1.1"
+
+    failover_ip = FailoverIp.new("https://username:password@robot-ws.your-server.de", "0.0.0.0", [])
+
+    assert_equal "1.1.1.1", failover_ip.current_ip
   end
 
   def test_switch_ips
-    # Can't be tested.
+    setup_current_ip "1.1.1.1"
+
+    failover_ip = FailoverIp.new("https://username:password@robot-ws.your-server.de", "0.0.0.0", ["1.1.1.1", "127.0.0.1"])
+
+    assert failover_ip.switch_ips
   end
 
   def test_base_url

@@ -1,4 +1,7 @@
 
+require "json"
+require "rest-client"
+
 require "lib/hooks"
 
 class FailoverIp
@@ -19,7 +22,7 @@ class FailoverIp
   end
 
   def current_ip
-    JSON.parse(RestClient.get("https://#{base_url}/failover/#{failover_ip}"))["failover"]["active_server_ip"]
+    JSON.parse(RestClient.get("#{base_url}/failover/#{failover_ip}"))["failover"]["active_server_ip"]
   rescue Exception => e
     $logger.error "Unable to retrieve the active server ip."
 
@@ -44,7 +47,7 @@ class FailoverIp
 
       switch_from = current_ip
 
-      # RestClient.post("https://#{base_url}/failover/#{failover_ip}", :active_server_ip => switch_to)
+      # RestClient.post("#{base_url}/failover/#{failover_ip}", :active_server_ip => switch_to)
 
       Hooks.run switch_from, switch_to
 

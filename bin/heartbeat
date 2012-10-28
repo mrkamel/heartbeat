@@ -5,12 +5,9 @@ $:.unshift File.expand_path("../..", __FILE__)
 require "rubygems"
 require "bundler/setup"
 require "logger"
-
 require "lib/failover_ip"
 
 config = YAML.load(File.read(File.expand_path("../../config/heartbeat.yml", __FILE__)))
-
-# Keep 3 logfiles with up to 10 MB max.
 
 $logger = Logger.new(File.expand_path("../../log/heartbeat.log", __FILE__), 3, 10_485_760)
 
