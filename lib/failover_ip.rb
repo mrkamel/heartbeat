@@ -1,4 +1,6 @@
 
+require "lib/hooks"
+
 class FailoverIp
   attr_accessor :base_url, :failover_ip, :ips
 
@@ -40,7 +42,11 @@ class FailoverIp
     if switch_to = next_ip
       $logger.info "switching to #{switch_to}."
 
+      switch_from = current_ip
+
       # RestClient.post("https://#{base_url}/failover/#{failover_ip}", :active_server_ip => switch_to)
+
+      Hooks.run switch_from, switch_to
 
       return true
     end

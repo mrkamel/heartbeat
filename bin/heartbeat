@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 
+$:.unshift File.expand_path("../..", __FILE__)
+
 require "rubygems"
 require "bundler/setup"
 require "logger"
 
-require File.expand_path("../../lib/failover_ip", __FILE__)
+require "lib/failover_ip"
 
 config = YAML.load(File.read(File.expand_path("../../config/heartbeat.yml", __FILE__)))
 

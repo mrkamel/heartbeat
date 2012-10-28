@@ -1,8 +1,10 @@
 
-require "test/unit"
+$:.unshift File.expand_path("../..", __FILE__)
+
+require "test/test_helper"
 require "stringio"
 
-require File.expand_path("../../lib/failover_ip", __FILE__)
+require "lib/failover_ip"
 
 class FailoverIpTest < Test::Unit::TestCase
   def test_ping

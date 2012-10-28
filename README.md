@@ -96,3 +96,14 @@ Finally, you can start the daemon:
 $ /etc/init.d/hearbeat start
 </pre>
 
+## Hooks
+
+You can add your own hooks which will be run after the failover ip is switched
+from one active server ip to another in case the first one is down. To add hooks,
+add your shell, ruby or other scripts to the 'hooks' folder within heartbeat's
+root folder. Please note that your scripts must of course be executable by the
+heartbeat daemon. Heartbeat will execute your scripts in alphabetical order and
+will pass the old active server ip as first argument and the new active server
+ip as second argument to your scripts. Please take a look at
+examples/hooks/example to learn more about how to write your own hooks.
+

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "Heartbeat switched the failover ip from active server ip $1 to $2."
+
