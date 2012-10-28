@@ -40,7 +40,7 @@ class FailoverIpTest < Test::Unit::TestCase
   end
 
   def test_current_ip
-    setup_current_ip "1.1.1.1"
+    set_current_ip "1.1.1.1"
 
     failover_ip = FailoverIp.new("https://username:password@robot-ws.your-server.de", "0.0.0.0", [])
 
@@ -48,7 +48,7 @@ class FailoverIpTest < Test::Unit::TestCase
   end
 
   def test_switch_ips
-    setup_current_ip "1.1.1.1"
+    set_current_ip "1.1.1.1"
 
     failover_ip = FailoverIp.new("https://username:password@robot-ws.your-server.de", "0.0.0.0", ["1.1.1.1", "127.0.0.1"])
 

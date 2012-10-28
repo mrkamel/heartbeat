@@ -49,7 +49,7 @@ EOF
     end
   end
 
-  def setup_current_ip(current_ip)
+  def set_current_ip(current_ip)
     response = { :failover => { :active_server_ip => current_ip } }
 
     RestClient.expects(:get).at_least_once.with("https://username:password@robot-ws.your-server.de/failover/0.0.0.0").returns(JSON.dump(response))
