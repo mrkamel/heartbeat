@@ -12,10 +12,13 @@
 SCRIPT_PATH=`/bin/readlink -f "$0"`
 BASE_PATH=`/usr/bin/dirname "$SCRIPT_PATH"`
 
+USER=root
+GROUP=root
+
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 
 HEARTBEAT=$BASE_PATH/heartbeat
-PIDFILE=/var/run/heartbeat.pid
+PIDFILE=/tmp/heartbeat.pid
 
 [ -x "$HEARTBEAT" ] || exit 0
 
@@ -26,14 +29,14 @@ do_start()
 {
   echo "Starting heartbeat."
 
-  start-stop-daemon --background --start --quiet --pidfile $PIDFILE --make-pidfile --exec $HEARTBEAT
+  start-stop-daemon --group $GROUP --chuid $USER --background --start --quiet --pidfile $PIDFILE --make-pidfile --exec $HEARTBEAT
 }
 
 do_stop()
 {
   echo "Stopping heartbeat."
 
-  start-stop-daemon --stop --quiet --pidfile $PIDFILE
+  start-stop-daemon --group $GROUP --chuid $USER --stop --quiet --pidfile $PIDFILE
 
   rm -f $PIDFILE
 }
