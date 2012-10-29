@@ -1,7 +1,6 @@
 
 require "json"
 require "rest-client"
-
 require "lib/hooks"
 
 class FailoverIp

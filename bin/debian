@@ -17,7 +17,7 @@ GROUP=root
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 
-HEARTBEAT=$BASE_PATH/heartbeat
+HEARTBEAT=bin/heartbeat
 PIDFILE=/tmp/heartbeat.pid
 
 [ -x "$HEARTBEAT" ] || exit 0
@@ -29,7 +29,7 @@ do_start()
 {
   echo "Starting heartbeat."
 
-  start-stop-daemon --group $GROUP --chuid $USER --background --start --quiet --pidfile $PIDFILE --make-pidfile --exec $HEARTBEAT
+  start-stop-daemon --group $GROUP --chuid $USER --background --start --quiet --pidfile $PIDFILE --make-pidfile --chdir "$BASE_PATH" --exec $HEARTBEAT
 }
 
 do_stop()

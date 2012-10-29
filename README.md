@@ -2,16 +2,18 @@
 # Heartbeat
 
 Heartbeat is a rather simple daemon which pings a Hetzner Failover IP. If the
-Failover IP is down, Heartbeat will try to set a new active server ip for the
-Failover IP through the API provided by Hetzner. For further details of Hetzner
-Failover IPs, please check
+Failover IP is down, Heartbeat will automatically try to set a new active server
+ip for the Failover IP through the API provided by Hetzner. For further details
+of Hetzner Failover IPs, please check
 
 http://wiki.hetzner.de/index.php/Robot_Webservice#POST_.2Ffailover.2F.3Cfailover-ip.3E
 
 ## Motivation
 
 There are plenty of HA tools out there. However, i thought (and think!) they
-are too heavy-weight for this rather simple task. Thus, i wrote Heartbeat.
+are too heavy-weight for this rather simple task. Thus, i wrote Heartbeat to
+automatically switch between load balancers and mySQL servers i run behind
+Hetzner Failover IPs in case one becomes down/unavailable.
 
 ## Current State
 
@@ -66,7 +68,7 @@ $ cd /path/to/heartbeat
 $ /var/lib/gems/1.8/bin/bundle
 </pre>
 
-To configure the Hetzner API access, the failover ip as well as your server's
+To configure the Hetzner API access, the Failover IP as well as your server's
 ip addresses, edit config/heartbeat.yml
 
 <pre>
@@ -98,7 +100,7 @@ $ /etc/init.d/hearbeat start
 
 ## Hooks
 
-You can add your own hooks which will be run after the failover ip is switched
+You can add your own hooks which will be run after the Failover IP is switched
 from one active server ip to another in case the first one is down. To add hooks,
 add your shell, ruby or other scripts to the 'hooks' folder within heartbeat's
 root folder. Please note that your scripts must of course be executable by the
