@@ -42,7 +42,7 @@ class FailoverIp
 
   def switch_ips
     if new_ip = next_ip
-      $logger.info "switching to #{new_ip}."
+      $logger.info "Switching to #{new_ip}."
 
       old_ip = current_ip
 
