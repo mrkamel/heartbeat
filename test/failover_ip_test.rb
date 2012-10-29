@@ -52,7 +52,9 @@ class FailoverIpTest < Test::Unit::TestCase
 
     failover_ip = FailoverIp.new("https://username:password@robot-ws.your-server.de", "0.0.0.0", ["1.1.1.1", "127.0.0.1"])
 
-    assert failover_ip.switch_ips
+    assert_hooks_run do
+      assert failover_ip.switch_ips
+    end
   end
 
   def test_base_url

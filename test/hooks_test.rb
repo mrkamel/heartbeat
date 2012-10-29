@@ -7,7 +7,7 @@ require "lib/hooks"
 class HooksTest < Test::Unit::TestCase
   def test_run
     assert_hooks_run do
-      Hooks.run "1.1.1.1", "2.2.2.2"
+      Hooks.run "0.0.0.0", "1.1.1.1", "2.2.2.2"
     end
   end
 end

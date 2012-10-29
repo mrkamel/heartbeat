@@ -16,7 +16,7 @@ class Test::Unit::TestCase
       stream.write <<EOF
 #!/bin/sh
 
-echo "$1, $2" > /tmp/hook1.txt
+echo "$1, $2, $3" > /tmp/hook1.txt
 EOF
     end
 
@@ -26,7 +26,7 @@ EOF
       stream.write <<EOF
 #!/bin/sh
 
-echo "$1, $2" > /tmp/hook2.txt
+echo "$1, $2, $3" > /tmp/hook2.txt
 EOF
     end
 
@@ -35,11 +35,13 @@ EOF
     begin
       yield
 
+      pattern = /\A[0-9]+\.[0-9]+\.[0-9]\.[0-9]+, [0-9]+\.[0-9]+\.[0-9]\.[0-9]+, [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\Z/
+
       assert File.exists?("/tmp/hook1.txt")
-      assert File.read("/tmp/hook1.txt") =~ /[0-9]+\.[0-9]+\.[0-9]\.[0-9]+, [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
+      assert File.read("/tmp/hook1.txt") =~ pattern
 
       assert File.exists?("/tmp/hook2.txt")
-      assert File.read("/tmp/hook2.txt") =~ /[0-9]+\.[0-9]+\.[0-9]\.[0-9]+, [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
+      assert File.read("/tmp/hook2.txt") =~ pattern
     ensure
       FileUtils.rm_f File.join(hooks, "hook1")
       FileUtils.rm_f File.join(hooks, "hook2")

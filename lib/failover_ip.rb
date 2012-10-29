@@ -41,14 +41,14 @@ class FailoverIp
   end
 
   def switch_ips
-    if switch_to = next_ip
-      $logger.info "switching to #{switch_to}."
+    if new_ip = next_ip
+      $logger.info "switching to #{new_ip}."
 
-      switch_from = current_ip
+      old_ip = current_ip
 
-      # RestClient.post("#{base_url}/failover/#{failover_ip}", :active_server_ip => switch_to)
+      # RestClient.post("#{base_url}/failover/#{failover_ip}", :active_server_ip => new_ip)
 
-      Hooks.run switch_from, switch_to
+      Hooks.run failover_ip, old_ip, new_ip
 
       return true
     end

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "To: email@example.org
+From: email@example.org
+Subject: Heartbeat notice from `/bin/hostname`
+
+Switched the failover ip from $1 to $2" | /usr/sbin/sendmail -t
+

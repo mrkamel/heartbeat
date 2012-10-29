@@ -105,7 +105,16 @@ from one active server ip to another in case the first one is down. To add hooks
 add your shell, ruby or other scripts to the 'hooks' folder within heartbeat's
 root folder. Please note that your scripts must of course be executable by the
 heartbeat daemon. Heartbeat will execute your scripts in alphabetical order and
-will pass the old active server ip as first argument and the new active server
-ip as second argument to your scripts. Please take a look at
-examples/hooks/example to learn more about how to write your own hooks.
+will pass the failover ip as first argument, the old active server ip as second
+argument and the new active server ip as the third argument to your scripts.
+Please take a look at examples/hooks/email to learn more about how to write your
+own hooks.
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
 
