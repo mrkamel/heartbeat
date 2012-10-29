@@ -10,7 +10,7 @@
 ### END INIT INFO
 
 SCRIPT_PATH=`/bin/readlink -f "$0"`
-BASE_PATH=`/usr/bin/dirname "$SCRIPT_PATH"`
+BASE_PATH=`/usr/bin/dirname "$SCRIPT_PATH"`/..
 
 USER=root
 GROUP=root
