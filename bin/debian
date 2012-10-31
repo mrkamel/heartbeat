@@ -17,7 +17,7 @@ GROUP=root
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 
-HEARTBEAT=bin/heartbeat
+HEARTBEAT=$BASE_PATH/bin/heartbeat
 PIDFILE=/tmp/heartbeat.pid
 
 [ -x "$HEARTBEAT" ] || exit 0
