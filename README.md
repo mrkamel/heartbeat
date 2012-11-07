@@ -102,7 +102,7 @@ Finally, you can start the daemon:
 $ /etc/init.d/hearbeat start
 </pre>
 
-## What does this `ping_ip` thing do?
+## What's the `ping_ip`?
 
 Unless you run heartbeat on a hetzner machine that actually listens to your
 Failover IP, you can just use your Failover IP for the `ping_ip` option.
