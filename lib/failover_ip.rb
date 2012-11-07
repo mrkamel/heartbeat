@@ -70,13 +70,13 @@ class FailoverIp
   def monitor
     loop do
       if down?
-        $logger.info "#{failover_ip} is down."
+        $logger.info "#{ping_ip} is down."
 
         switch_ips
 
         sleep 300
       else
-        $logger.info "#{failover_ip} is up."
+        $logger.info "#{ping_ip} is up."
 
         sleep 30
       end
