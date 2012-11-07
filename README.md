@@ -76,10 +76,14 @@ base_url: https://username:password@robot-ws.your-server.de
 
 failover_ip: 0.0.0.0
 
+ping_ip: 0.0.0.0
+
 ips:
   - 1.1.1.1
   - 2.2.2.2
 </pre>
+
+What is meant by `ping_ip` is explained below in detail.
 
 Heartbeat provides an init script for Debian you can use to start Heartbeat at
 boot time. However, you have to symlink to it yourself. It is *important* to
@@ -96,6 +100,50 @@ Finally, you can start the daemon:
 
 <pre>
 $ /etc/init.d/hearbeat start
+</pre>
+
+## What does this `ping_ip` thing do?
+
+Unless you run heartbeat on a hetzner machine that actually listens to your
+Failover IP, you can just use your Failover IP as `ping_ip`.
+
+Otherwise, assume, you have e.g., two load balancers running and you want
+heartbeat to sit on each load balancer to monitor the state of the other.
+In case one load balancer is down, heartbeat running on the other load
+balancer will detect this. However, as your load balancers both listen to
+the Failover IP they actually want to monitor, they do nothing but monitor
+themselves only. Thus, the `ping_ip` enables you to ping the individual
+IP of the other load balancer - just what you want.
+
+Example: You have two load balancers `1.1.1.1` and `2.2.2.2` and a Failover IP
+`0.0.0.0` both load balancers are addtionally listening to.
+
+On `1.1.1.1` your heartbeat config would look like:
+
+<pre>
+base_url: ...
+
+failover_ip: 0.0.0.0
+
+ping_ip: 2.2.2.2
+
+ips:
+  - 1.1.1.1
+  - 2.2.2.2
+</pre>
+
+And an `2.2.2.2` your heartbeat config would look like:
+
+<pre>
+base_url: ...
+
+failover_ip: 0.0.0.0
+
+ping_ip: 1.1.1.1
+
+ips:
+  - 1.1.1.1
+  - 2.2.2.2
 </pre>
 
 ## Hooks

@@ -5,6 +5,8 @@ base_url: https://username:password@robot-ws.your-server.de
 
 failover_ip: 0.0.0.0
 
+ping_ip: 0.0.0.0
+
 ips:
   - 1.1.1.1
   - 2.2.2.2
