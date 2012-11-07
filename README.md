@@ -27,9 +27,9 @@ other monitoring options will probably be added in the future.
 
 ## Heartbeat's Behaviour
 
-A few words about Heartbeat's behaviour. Every 30 seconds, Heartbeat sends a
-ping to the Hetzner Failover IP. If Heartbeat does not receive an answer, it
-assumes that the server behind the Failover IP is down.
+A few words about Heartbeat's behaviour. By default, every 30 seconds,
+Heartbeat sends a ping to the Hetzner Failover IP. If Heartbeat does not
+receive an answer, it assumes that the server behind the Failover IP is down.
 
 Since, Heartbeat uses plain-old ping's, be sure you can ping your servers
 before using Heartbeat!
@@ -87,6 +87,8 @@ ping_ip: 0.0.0.0
 ips:
   - 1.1.1.1
   - 2.2.2.2
+
+interval: 30
 </pre>
 
 The `ping_ip` option is explained below in detail.
@@ -127,11 +129,9 @@ Example:
 You have two load balancers `1.1.1.1` and `2.2.2.2` and a Failover IP
 `0.0.0.0` both load balancers are addtionally listening to.
 
-On `1.1.1.1` your heartbeat config would look like:
+On `1.1.1.1`, the respective parts of your heartbeat config would look like:
 
 <pre>
-base_url: ...
-
 failover_ip: 0.0.0.0
 
 ping_ip: 2.2.2.2
@@ -141,11 +141,9 @@ ips:
   - 2.2.2.2
 </pre>
 
-And on `2.2.2.2` your heartbeat config would look like:
+And on `2.2.2.2` your heartbeat config would partially look like:
 
 <pre>
-base_url: ...
-
 failover_ip: 0.0.0.0
 
 ping_ip: 1.1.1.1

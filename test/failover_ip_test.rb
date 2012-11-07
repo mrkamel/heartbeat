@@ -38,6 +38,7 @@ class FailoverIpTest < Test::Unit::TestCase
     assert_equal "failover_ip", failover_ip.failover_ip
     assert_equal "ping_ip", failover_ip.ping_ip
     assert_equal ["ip1", "ip2"], failover_ip.ips
+    assert_equal 30, failover_ip.interval
   end
 
   def test_current_ip
