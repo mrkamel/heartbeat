@@ -83,7 +83,7 @@ ips:
   - 2.2.2.2
 </pre>
 
-What is meant by `ping_ip` is explained below in detail.
+The `ping_ip` option is explained below in detail.
 
 Heartbeat provides an init script for Debian you can use to start Heartbeat at
 boot time. However, you have to symlink to it yourself. It is *important* to
@@ -105,17 +105,21 @@ $ /etc/init.d/hearbeat start
 ## What does this `ping_ip` thing do?
 
 Unless you run heartbeat on a hetzner machine that actually listens to your
-Failover IP, you can just use your Failover IP as `ping_ip`.
+Failover IP, you can just use your Failover IP for the `ping_ip` option.
 
-Otherwise, assume, you have e.g., two load balancers running and you want
-heartbeat to sit on each load balancer to monitor the state of the other.
-In case one load balancer is down, heartbeat running on the other load
-balancer will detect this. However, as your load balancers both listen to
-the Failover IP they actually want to monitor, they do nothing but monitor
-themselves only. Thus, the `ping_ip` enables you to ping the individual
-IP of the other load balancer - just what you want.
+Otherwise, assume, you have e.g., two load balancers and you want heartbeat to
+run on each load balancer to monitor the state of the other one. In case one
+load balancer crashes, you want heartbeat running on the other load balancer to
+detect this and to switch the Failover IP to the other load balancer. However,
+as your load balancers actually both listen to the Failover IP themeselves,
+heartbeat will do nothing but monitor the indivual server it's running on (not
+the other one). Thus, the `ping_ip` option enables you to specfiy the exact ip
+you want to monitor on a specific host, i.e. the individual IP of the other
+load balancer.
 
-Example: You have two load balancers `1.1.1.1` and `2.2.2.2` and a Failover IP
+Example:
+
+You have two load balancers `1.1.1.1` and `2.2.2.2` and a Failover IP
 `0.0.0.0` both load balancers are addtionally listening to.
 
 On `1.1.1.1` your heartbeat config would look like:
@@ -132,7 +136,7 @@ ips:
   - 2.2.2.2
 </pre>
 
-And an `2.2.2.2` your heartbeat config would look like:
+And on `2.2.2.2` your heartbeat config would look like:
 
 <pre>
 base_url: ...
