@@ -105,17 +105,16 @@ $ /etc/init.d/hearbeat start
 ## What's the `ping_ip`?
 
 Unless you run heartbeat on a hetzner machine that actually listens to your
-Failover IP, you can just use your Failover IP for the `ping_ip` option.
+Failover IP, you can simply use your Failover IP for the `ping_ip` option.
 
 Otherwise, assume, you have e.g., two load balancers and you want heartbeat to
 run on each load balancer to monitor the state of the other one. In case one
 load balancer crashes, you want heartbeat running on the other load balancer to
-detect this and to switch the Failover IP to the other load balancer. However,
-as your load balancers actually both listen to the Failover IP themeselves,
-heartbeat will do nothing but monitor the indivual server it's running on (not
-the other one). Thus, the `ping_ip` option enables you to specfiy the exact ip
-you want to monitor on a specific host, i.e. the individual IP of the other
-load balancer.
+detect this and to switch the Failover IP to itself. However, as your load
+balancers actually both listen to the Failover IP themeselves, heartbeat will
+do nothing but monitor the indivual server it's running on (not the other one).
+Thus, the `ping_ip` option enables you to specfiy the exact ip you want to
+monitor on a specific host, i.e. the individual IP of the other load balancer.
 
 Example:
 
