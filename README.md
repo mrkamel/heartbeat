@@ -19,6 +19,12 @@ Hetzner Failover IPs in case one becomes down/unavailable.
 
 This is an early alpha. Simply don't use it yet!
 
+## Limitations
+
+Heartbeat uses plain-old ping's. Thus, it can only detect full crashes of
+your servers, where the server does no longer reply to a ping. However,
+other monitoring options will probably be added in the future.
+
 ## Heartbeat's Behaviour
 
 A few words about Heartbeat's behaviour. Every 30 seconds, Heartbeat sends a
