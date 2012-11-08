@@ -32,13 +32,15 @@ class FailoverIpTest < Test::Unit::TestCase
   end
 
   def test_initialize
-    failover_ip = FailoverIp.new("base_url", "failover_ip", "ping_ip", ["ip1", "ip2"])
+    failover_ip = FailoverIp.new("base_url", "failover_ip", "ping_ip", ["ip1", "ip2"], 60, 5, 1)
 
     assert_equal "base_url", failover_ip.base_url
     assert_equal "failover_ip", failover_ip.failover_ip
     assert_equal "ping_ip", failover_ip.ping_ip
     assert_equal ["ip1", "ip2"], failover_ip.ips
-    assert_equal 30, failover_ip.interval
+    assert_equal 60, failover_ip.interval
+    assert_equal 5, failover_ip.timeout
+    assert_equal 1, failover_ip.tries
   end
 
   def test_current_ip

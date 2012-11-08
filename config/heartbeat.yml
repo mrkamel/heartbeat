@@ -13,3 +13,7 @@ ips:
 
 interval: 30
 
+timeout: 10
+
+tries: 3
+

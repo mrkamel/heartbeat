@@ -89,9 +89,16 @@ ips:
   - 2.2.2.2
 
 interval: 30
+
+timeout: 10
+
+tries: 3
 </pre>
 
-The `ping_ip` option is explained below in detail.
+The `ping_ip` option is explained below in detail. The `interval` option
+specifies how long to sleep between the ping attempts. The `timeout` specifies
+the timeout to use for a ping and `tries` specifies how many pings to send to
+the ip which is about to be tested.
 
 Heartbeat provides an init script for Debian you can use to start Heartbeat at
 boot time. However, you have to symlink to it yourself. It is *important* to

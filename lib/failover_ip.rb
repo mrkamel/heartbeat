@@ -4,10 +4,10 @@ require "rest-client"
 require "lib/hooks"
 
 class FailoverIp
-  attr_accessor :base_url, :failover_ip, :ping_ip, :ips, :interval
+  attr_accessor :base_url, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries
 
   def ping(ip = ping_ip)
-    `ping -W 10 -c 1 #{ip}`
+    `ping -W #{timeout} -c #{tries} #{ip}`
 
     $?.success?
   end
@@ -60,12 +60,14 @@ class FailoverIp
     false
   end
 
-  def initialize(base_url, failover_ip, ping_ip, ips, interval = 30)
+  def initialize(base_url, failover_ip, ping_ip, ips, interval = 30, timeout = 10, tries = 3)
     self.base_url = base_url
     self.failover_ip = failover_ip
     self.ping_ip = ping_ip
     self.ips = ips
     self.interval = interval
+    self.timeout = timeout
+    self.tries = tries
   end
 
   def monitor
