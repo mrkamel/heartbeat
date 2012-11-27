@@ -60,14 +60,14 @@ class FailoverIp
     false
   end
 
-  def initialize(base_url, failover_ip, ping_ip, ips, interval = 30, timeout = 10, tries = 3)
-    self.base_url = base_url
-    self.failover_ip = failover_ip
-    self.ping_ip = ping_ip
-    self.ips = ips
-    self.interval = interval
-    self.timeout = timeout
-    self.tries = tries
+  def initialize(options)
+    self.base_url = options[:base_url]
+    self.failover_ip = options[:failover_ip]
+    self.ping_ip = options[:ping_ip]
+    self.ips = options[:ips]
+    self.interval = options[:interval] || 30
+    self.timeout = options[:timeout] || 10
+    self.tries = options[:tries] || 3
   end
 
   def monitor

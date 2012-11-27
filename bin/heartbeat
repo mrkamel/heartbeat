@@ -9,15 +9,11 @@ require "lib/failover_ip"
 
 config = YAML.load(File.read(File.expand_path("../../config/heartbeat.yml", __FILE__)))
 
+config.keys.each do |key|
+  config[key.to_sym] = config.delete(key)
+end
+
 $logger = Logger.new(File.expand_path("../../log/heartbeat.log", __FILE__), 3, 10_485_760)
 
-FailoverIp.new(
-  config["base_url"],
-  config["failover_ip"],
-  config["ping_ip"],
-  config["ips"],
-  config["interval"],
-  config["timeout"],
-  config["tries"]
-).monitor
+FailoverIp.new(config).monitor
 
