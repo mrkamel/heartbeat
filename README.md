@@ -54,30 +54,30 @@ network in some way.
 Heartbeat is written in ruby. Thus, you first have to install ruby, rubygems
 and bundler.
 
-<pre>
+```
 $ apt-get install ruby rubygems
 $ gem install bundler
-</pre>
+```
 
 Afterwards, you need to install Heartbeat's dependencies:
 
-<pre>
+```
 $ cd /path/to/heartbeat
 $ bundle
-</pre>
+```
 
 If the bundle command can't be found, search your system for the bundle
 executeable. This can e.g. happen for Debian Squeeze.
 
-<pre>
+```
 $ cd /path/to/heartbeat
 $ /var/lib/gems/1.8/bin/bundle
-</pre>
+```
 
 To configure the Hetzner API access, the Failover IP as well as your server's
 ip addresses, edit config/heartbeat.yml
 
-<pre>
+```yaml
 base_url: https://username:password@robot-ws.your-server.de
 
 failover_ip: 0.0.0.0
@@ -93,7 +93,7 @@ interval: 30
 timeout: 10
 
 tries: 3
-</pre>
+```
 
 The `ping_ip` option is explained below in detail. The `interval` option
 specifies how long to sleep between the ping attempts. The `timeout` specifies
@@ -105,17 +105,17 @@ boot time. However, you have to symlink to it yourself. It is *important* to
 actually symlink to it. Otherwise, the init script can't find the location of
 your Heartbeat installation.
 
-<pre>
+```
 $ cd /etc/init.d
 $ ln -s /path/to/heartbeat/bin/debian heartbeat
 $ update-rc.d heartbeat defaults
-</pre>
+```
 
 Finally, you can start the daemon:
 
-<pre>
+```
 $ /etc/init.d/hearbeat start
-</pre>
+```
 
 ## What's the `ping_ip`?
 
@@ -138,7 +138,7 @@ You have two load balancers `1.1.1.1` and `2.2.2.2` and a Failover IP
 
 On `1.1.1.1`, the respective parts of your heartbeat config would look like:
 
-<pre>
+```yaml
 failover_ip: 0.0.0.0
 
 ping_ip: 2.2.2.2
@@ -146,11 +146,11 @@ ping_ip: 2.2.2.2
 ips:
   - 1.1.1.1
   - 2.2.2.2
-</pre>
+```
 
 And on `2.2.2.2` your heartbeat config would partially look like:
 
-<pre>
+```yaml
 failover_ip: 0.0.0.0
 
 ping_ip: 1.1.1.1
@@ -158,7 +158,7 @@ ping_ip: 1.1.1.1
 ips:
   - 1.1.1.1
   - 2.2.2.2
-</pre>
+```
 
 ## Hooks
 

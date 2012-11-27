@@ -46,7 +46,7 @@ class FailoverIp
 
       old_ip = current_ip
 
-      # RestClient.post("#{base_url}/failover/#{failover_ip}", :active_server_ip => new_ip)
+      RestClient.post "#{base_url}/failover/#{failover_ip}", :active_server_ip => new_ip
 
       Hooks.run failover_ip, old_ip, new_ip
 

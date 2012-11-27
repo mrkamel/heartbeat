@@ -44,7 +44,7 @@ class FailoverIpTest < Test::Unit::TestCase
   end
 
   def test_current_ip
-    set_current_ip "1.1.1.1"
+    set_current_ip :failover_ip => "0.0.0.0", :ip => "1.1.1.1"
 
     failover_ip = FailoverIp.new("https://username:password@robot-ws.your-server.de", "0.0.0.0", "", [])
 
@@ -52,12 +52,12 @@ class FailoverIpTest < Test::Unit::TestCase
   end
 
   def test_switch_ips
-    set_current_ip "1.1.1.1"
+    set_current_ip :failover_ip => "0.0.0.0", :ip => "1.1.1.1"
 
     failover_ip = FailoverIp.new("https://username:password@robot-ws.your-server.de", "0.0.0.0", "", ["1.1.1.1", "127.0.0.1"])
 
     assert_hooks_run do
-      assert failover_ip.switch_ips
+      assert_switch(:failover_ip => "0.0.0.0", :to => "127.0.0.1") { failover_ip.switch_ips }
     end
   end
 

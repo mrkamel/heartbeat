@@ -51,10 +51,16 @@ EOF
     end
   end
 
-  def set_current_ip(current_ip)
-    response = { :failover => { :active_server_ip => current_ip } }
+  def set_current_ip(options)
+    response = { :failover => { :active_server_ip => options[:ip] } }
 
-    RestClient.expects(:get).at_least_once.with("https://username:password@robot-ws.your-server.de/failover/0.0.0.0").returns(JSON.dump(response))
+    RestClient.expects(:get).at_least_once.with("https://username:password@robot-ws.your-server.de/failover/#{options[:failover_ip]}").returns(JSON.dump(response))
+  end
+
+  def assert_switch(options)
+    RestClient.expects(:post).with("https://username:password@robot-ws.your-server.de/failover/#{options[:failover_ip]}", :active_server_ip => options[:to]).returns(200)
+
+    yield
   end
 end
 
