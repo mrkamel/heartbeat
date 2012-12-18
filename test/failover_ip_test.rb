@@ -19,61 +19,98 @@ class FailoverIpTest < Test::Unit::TestCase
   end
 
   def test_next_ip
-    failover_ip = FailoverIp.new(:ips => ["127.0.0.1", "127.0.0.2", "111.111.111.111", "127.0.0.3"])
+    failover_ip = FailoverIp.new(:ips => [
+      { :ping => "127.0.0.1", :target => "1.1.1.1" },
+      { :ping => "127.0.0.2", :target => "2.2.2.2" },
+      { :ping => "255.0.0.1", :target => "3.3.3.3" },
+      { :ping => "127.0.0.3", :target => "4.4.4.4" }
+    ])
 
-    assert_equal "127.0.0.2", failover_ip.next_ip("127.0.0.1")
-    assert_equal "127.0.0.3", failover_ip.next_ip("127.0.0.2")
-    assert_equal "127.0.0.1", failover_ip.next_ip("127.0.0.3")
+    assert_equal({ :ping => "127.0.0.2", :target => "2.2.2.2" }, failover_ip.next_ip("1.1.1.1"))
+    assert_equal({ :ping => "127.0.0.3", :target => "4.4.4.4" }, failover_ip.next_ip("2.2.2.2"))
+    assert_equal({ :ping => "127.0.0.1", :target => "1.1.1.1" }, failover_ip.next_ip("4.4.4.4"))
 
-    failover_ip = FailoverIp.new(:ips => ["111.111.111.111", "222.222.222"])
+    failover_ip = FailoverIp.new(:ips => [
+      { :ping => "255.0.0.1", :target => "1.1.1.1" },
+      { :ping => "255.0.0.2", :target => "2.2.2.2" }
+    ])
 
-    assert_nil failover_ip.next_ip("111.111.111.111")
-    assert_nil failover_ip.next_ip("222.222.222.222")
+    assert_nil failover_ip.next_ip("1.1.1.1")
+    assert_nil failover_ip.next_ip("2.2.2.2")
   end
 
   def test_initialize
-    failover_ip = FailoverIp.new(:base_url => "base_url", :failover_ip => "failover_ip",
-      :ping_ip => "ping_ip", :ips => ["ip1", "ip2"], :interval => 60, :timeout => 5, :tries => 1)
+    failover_ip = FailoverIp.new(:base_url => "base_url", :failover_ip => "failover_ip", :ping_ip => "ping_ip", :interval => 60,
+      :ips => [{ :ping => "ping1", :target => "target1" }, { :ping => "ping2", :target => "target2" }], :timeout => 5, :tries => 1)
 
     assert_equal "base_url", failover_ip.base_url
     assert_equal "failover_ip", failover_ip.failover_ip
     assert_equal "ping_ip", failover_ip.ping_ip
-    assert_equal ["ip1", "ip2"], failover_ip.ips
+    assert_equal [{ :ping => "ping1", :target => "target1" }, { :ping => "ping2", :target => "target2" }], failover_ip.ips
     assert_equal 60, failover_ip.interval
     assert_equal 5, failover_ip.timeout
     assert_equal 1, failover_ip.tries
   end
 
-  def test_current_ip
+  def test_current_target
     failover_ip = FailoverIp.new(:base_url => "https://username:password@robot-ws.your-server.de",
       :failover_ip => "0.0.0.0")
 
-    set_current_ip :failover_ip => failover_ip, :ip => "1.1.1.1"
+    set_current_target :failover_ip => failover_ip, :ip => "1.1.1.1"
 
-    assert_equal "1.1.1.1", failover_ip.current_ip
+    assert_equal "1.1.1.1", failover_ip.current_target
+  end
+
+  def test_current_ping
+    failover_ip = FailoverIp.new(:base_url => "https://username:password@robot-ws.your-server.de", :failover_ip => "0.0.0.0",
+      :ips => [{ :ping => "1.1.1.1", :target => "2.2.2.2" }, { :ping => "3.3.3.3", :target => "4.4.4.4" }])
+
+    set_current_target :failover_ip => failover_ip, :ip => "2.2.2.2"
+
+    assert_equal "1.1.1.1", failover_ip.current_ping
+
+    set_current_target :failover_ip => failover_ip, :ip => "4.4.4.4"
+
+    assert_equal "3.3.3.3", failover_ip.current_ping
   end
 
   def test_switch_ips
-    failover_ip = FailoverIp.new(:base_url => "https://username:password@robot-ws.your-server.de",
-      :failover_ip => "0.0.0.0", :ips => ["1.1.1.1", "127.0.0.1"])
+    failover_ip = FailoverIp.new(:base_url => "https://username:password@robot-ws.your-server.de", :failover_ip => "0.0.0.0",
+      :ips => [{ :ping => "1.1.1.1", :target => "2.2.2.2" }, { :ping => "127.0.0.1", :target => "3.3.3.3" }])
 
-    set_current_ip :failover_ip => failover_ip, :ip => "1.1.1.1"
+    set_current_target :failover_ip => failover_ip, :ip => "2.2.2.2"
 
     assert_hooks_run do
-      assert_switch(:failover_ip => failover_ip, :to => "127.0.0.1") { failover_ip.switch_ips }
+      assert_switch(:failover_ip => failover_ip, :to => "3.3.3.3") { failover_ip.switch_ips }
     end
   end
 
+  def test_check_with_failover
+    failover_ip = FailoverIp.new(:base_url => "https://username:password@robot-ws.your-server.de", :failover_ip => "0.0.0.0",
+      :ping_ip => "1.1.1.1", :ips => [{ :ping => "1.1.1.1", :target => "2.2.2.2" }, { :ping => "127.0.0.1", :target => "3.3.3.3" }])
+
+    set_current_target :failover_ip => failover_ip, :ip => "2.2.2.2"
+
+    assert_switch(:failover_ip => failover_ip, :to => "3.3.3.3") { refute failover_ip.check }
+  end
+
+  def test_check_without_failover
+    failover_ip = FailoverIp.new(:base_url => "https://username:password@robot-ws.your-server.de", :failover_ip => "0.0.0.0",
+      :ping_ip => "127.0.0.1", :ips => [{ :ping => "127.0.0.1", :target => "3.3.3.3" }])
+
+    assert failover_ip.check
+  end
+
   def test_base_url
-    # Already tested.
+    # Already tested
   end
 
   def test_failover_ip
-    # Already tested.
+    # Already tested
   end
 
   def test_ips
-    # Already tested.
+    # Already tested
   end
 end
 

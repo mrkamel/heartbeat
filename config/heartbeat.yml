@@ -8,8 +8,10 @@ failover_ip: 0.0.0.0
 ping_ip: 0.0.0.0
 
 ips:
-  - 1.1.1.1
-  - 2.2.2.2
+  - ping: 1.1.1.1
+    target: 1.1.1.1
+  - ping: 2.2.2.2
+    target: 2.2.2.2
 
 interval: 30
 

@@ -51,7 +51,7 @@ EOF
     end
   end
 
-  def set_current_ip(options)
+  def set_current_target(options)
     response = { :failover => { :active_server_ip => options[:ip] } }
 
     url = "#{options[:failover_ip].base_url}/failover/#{options[:failover_ip].failover_ip}"
@@ -65,6 +65,10 @@ EOF
     RestClient.expects(:post).with(url, :active_server_ip => options[:to]).returns(200)
 
     yield
+  end
+
+  def refute(boolean)
+    assert !boolean
   end
 end
 

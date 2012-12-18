@@ -2,6 +2,7 @@
 require "json"
 require "rest-client"
 require "lib/hooks"
+require "hashr"
 
 class FailoverIp
   attr_accessor :base_url, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries
@@ -20,41 +21,53 @@ class FailoverIp
     !ping
   end
 
-  def current_ip
-    JSON.parse(RestClient.get("#{base_url}/failover/#{failover_ip}"))["failover"]["active_server_ip"]
-  rescue Exception => e
+  def current_target
+    response = RestClient.get("#{base_url}/failover/#{failover_ip}")
+
+    JSON.parse(response).deep_symbolize_keys[:failover][:active_server_ip]
+  rescue
     $logger.error "Unable to retrieve the active server ip."
 
     nil
   end
 
-  def next_ip(current = current_ip)
-    if index = ips.index(current)
+  def current_ping
+    res = ips.detect { |ip| ip[:target] == current_target }
+
+    return res[:ping] if res
+
+    nil
+  end
+
+  def next_ip(target = current_target)
+    if index = ips.index { |ip| ip[:target] == target }
       (ips.size - 1).times do |i|
         ip = ips[(index + i + 1) % ips.size]
 
-        return ip if ping(ip)
+        return ip if ping(ip[:ping])
       end
     end
+
+    $logger.error "No more ip's available."
 
     nil
   end
 
   def switch_ips
     if new_ip = next_ip
-      $logger.info "Switching to #{new_ip}."
+      $logger.info "Switching to #{new_ip[:target]}."
 
-      old_ip = current_ip
+      old_target = current_target
 
-      RestClient.post "#{base_url}/failover/#{failover_ip}", :active_server_ip => new_ip
+      RestClient.post "#{base_url}/failover/#{failover_ip}", :active_server_ip => new_ip[:target]
 
-      Hooks.run failover_ip, old_ip, new_ip
+      Hooks.run failover_ip, old_target, new_ip[:target]
 
       return true
     end
 
     false
-  rescue Exception => e
+  rescue
     $logger.error "Unable to set a new active server ip."
 
     false
@@ -70,19 +83,29 @@ class FailoverIp
     self.tries = options[:tries] || 3
   end
 
+  def check
+    if down?
+      $logger.info "#{ping_ip} is down."
+
+      current = current_ping
+
+      if ping_ip == current
+        switch_ips
+      else
+        $logger.info "Not responsible for #{current}."
+      end
+
+      false
+    else
+      $logger.info "#{ping_ip} is up."
+
+      true
+    end
+  end
+
   def monitor
     loop do
-      if down?
-        $logger.info "#{ping_ip} is down."
-
-        switch_ips
-
-        sleep 300
-      else
-        $logger.info "#{ping_ip} is up."
-
-        sleep interval
-      end
+      check ? sleep(interval) : sleep(300)
     end
   end
 end

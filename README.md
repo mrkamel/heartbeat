@@ -85,8 +85,10 @@ failover_ip: 0.0.0.0
 ping_ip: 0.0.0.0
 
 ips:
-  - 1.1.1.1
-  - 2.2.2.2
+  - ping: 10.0.0.1
+    target: 10.0.0.2
+  - ping: 10.0.1.1
+    target: 10.0.1.2
 
 interval: 30
 
@@ -117,7 +119,7 @@ Finally, you can start the daemon:
 $ /etc/init.d/hearbeat start
 ```
 
-## What's the `ping_ip`?
+## What's `ping_ip`, `ping` and `target`?
 
 Unless you run heartbeat on a hetzner machine that actually listens to your
 Failover IP, you can simply use your Failover IP for the `ping_ip` option.
@@ -144,8 +146,10 @@ failover_ip: 0.0.0.0
 ping_ip: 2.2.2.2
 
 ips:
-  - 1.1.1.1
-  - 2.2.2.2
+  - ping: 1.1.1.1
+    target: 1.1.1.1
+  - ping: 2.2.2.2
+    target: 2.2.2.2
 ```
 
 And on `2.2.2.2` your heartbeat config would partially look like:
@@ -156,9 +160,23 @@ failover_ip: 0.0.0.0
 ping_ip: 1.1.1.1
 
 ips:
-  - 1.1.1.1
-  - 2.2.2.2
+  - ping: 1.1.1.1
+    target: 1.1.1.1
+  - ping: 2.2.2.2
+    target: 2.2.2.2
 ```
+
+But what about `ping` and `target` within the `ips` block?
+
+Assume you run virtual machines on your server, where each virtual machine
+listens to an individual IP address. Your Failover IP, however, can only be
+bound to your server's main IP address. Thus, the `ping` option tells heartbeat
+about the virtual machine's IP addresses and heartbeat will use these addresses
+to check the availability of your virtual machines. Instead, `target` tells
+heartbeat which IP address to use in case heartbeat switches the Failover IP to
+the associated server. If you don't use virtual machines or multiple IP
+addresses on your servers, you can simply use your server's main IP addresses
+for both, the `ping` as well as `target` option.
 
 ## Hooks
 
