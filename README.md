@@ -17,7 +17,7 @@ Hetzner Failover IPs in case one becomes down/unavailable.
 
 ## Current State
 
-This is an early alpha. Simply don't use it yet!
+We've used heartbeat for quite some time in production now.
 
 ## Limitations
 
