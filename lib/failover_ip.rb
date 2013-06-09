@@ -1,11 +1,11 @@
 
 require "json"
-require "rest-client"
+require "httparty"
 require "lib/hooks"
 require "hashr"
 
 class FailoverIp
-  attr_accessor :base_url, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries
+  attr_accessor :base_url, :basic_auth, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries
 
   def ping(ip = ping_ip)
     `ping -W #{timeout} -c #{tries} #{ip}`
@@ -22,9 +22,9 @@ class FailoverIp
   end
 
   def current_target
-    response = RestClient.get("#{base_url}/failover/#{failover_ip}")
+    response = HTTParty.get("#{base_url}/failover/#{failover_ip}", :basic_auth => basic_auth).parsed_response
 
-    JSON.parse(response).deep_symbolize_keys[:failover][:active_server_ip]
+    response.deep_symbolize_keys[:failover][:active_server_ip]
   rescue
     $logger.error "Unable to retrieve the active server ip."
 
@@ -32,7 +32,9 @@ class FailoverIp
   end
 
   def current_ping
-    res = ips.detect { |ip| ip[:target] == current_target }
+    target = current_target
+
+    res = ips.detect { |ip| ip[:target] == target }
 
     return res[:ping] if res
 
@@ -59,7 +61,7 @@ class FailoverIp
 
       old_target = current_target
 
-      RestClient.post "#{base_url}/failover/#{failover_ip}", :active_server_ip => new_ip[:target]
+      HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth)
 
       Hooks.run failover_ip, old_target, new_ip[:target]
 
@@ -75,6 +77,7 @@ class FailoverIp
 
   def initialize(options)
     self.base_url = options[:base_url]
+    self.basic_auth = options[:basic_auth]
     self.failover_ip = options[:failover_ip]
     self.ping_ip = options[:ping_ip]
     self.ips = options[:ips]

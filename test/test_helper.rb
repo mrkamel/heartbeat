@@ -52,17 +52,25 @@ EOF
   end
 
   def set_current_target(options)
-    response = { :failover => { :active_server_ip => options[:ip] } }
+    parsed_response = { :failover => { :active_server_ip => options[:ip] } }
+
+    response = Hashr.new(:parsed_response => parsed_response)
 
     url = "#{options[:failover_ip].base_url}/failover/#{options[:failover_ip].failover_ip}"
 
-    RestClient.expects(:get).at_least_once.with(url).returns(JSON.dump(response))
+    basic_auth = { :username => "username", :password => "password" }
+
+    HTTParty.expects(:get).at_least_once.with(url, :basic_auth => basic_auth).returns(response)
   end
 
   def assert_switch(options)
     url = "#{options[:failover_ip].base_url}/failover/#{options[:failover_ip].failover_ip}"
 
-    RestClient.expects(:post).with(url, :active_server_ip => options[:to]).returns(200)
+    basic_auth = { :username => "username", :password => "password" }
+
+    body = { :active_server_ip => options[:to] }
+
+    HTTParty.expects(:post).with(url, :body => body, :basic_auth => basic_auth).returns(200)
 
     yield
   end

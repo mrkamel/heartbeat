@@ -1,7 +1,11 @@
 
 # Set your username and password to access the Hetzner API.
 
-base_url: https://username:password@robot-ws.your-server.de
+base_url: https://robot-ws.your-server.de
+
+basic_auth:
+  username: username
+  password: password
 
 failover_ip: 0.0.0.0
 
