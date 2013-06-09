@@ -1,4 +1,10 @@
 
+# Recent changes!
+
+The config has recently changes, as we migrated to httparty.
+You now no longer set the API authentication within the base url.
+Checkout the example above or config/heartbeat.yml
+
 # Heartbeat
 
 Heartbeat is a rather simple daemon which pings a Hetzner Failover IP. If the
@@ -78,7 +84,11 @@ To configure the Hetzner API access, the Failover IP as well as your server's
 ip addresses, edit config/heartbeat.yml
 
 ```yaml
-base_url: https://username:password@robot-ws.your-server.de
+base_url: https://robot-ws.your-server.de
+
+basic_auth:
+  username: username
+  password: password
 
 failover_ip: 0.0.0.0
 
