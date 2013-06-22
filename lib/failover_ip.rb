@@ -5,7 +5,7 @@ require "lib/hooks"
 require "hashr"
 
 class FailoverIp
-  attr_accessor :base_url, :basic_auth, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries
+  attr_accessor :base_url, :basic_auth, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries, :force_down
 
   def ping(ip = ping_ip)
     `ping -W #{timeout} -c #{tries} #{ip}`
@@ -13,12 +13,8 @@ class FailoverIp
     $?.success?
   end
 
-  def up?
-    ping
-  end
-
   def down?
-    !ping
+    force_down || !ping
   end
 
   def current_target
@@ -84,6 +80,7 @@ class FailoverIp
     self.interval = options[:interval] || 30
     self.timeout = options[:timeout] || 10
     self.tries = options[:tries] || 3
+    self.force_down = options[:force_down] || false
   end
 
   def check

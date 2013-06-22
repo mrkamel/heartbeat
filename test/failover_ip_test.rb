@@ -10,12 +10,10 @@ class FailoverIpTest < Test::Unit::TestCase
     assert FailoverIp.new(:ping_ip => "127.0.0.1").ping
   end
 
-  def test_up?
-    assert FailoverIp.new(:ping_ip => "127.0.0.1").up?
-  end
-
   def test_down?
     assert FailoverIp.new(:ping_ip => "111.111.111.111").down?
+    refute FailoverIp.new(:ping_ip => "127.0.0.1").down?
+    assert FailoverIp.new(:ping_ip => "127.0.0.1", :force_down => true).down?
   end
 
   def test_next_ip

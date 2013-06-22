@@ -188,6 +188,17 @@ the associated server. If you don't use virtual machines or multiple IP
 addresses on your servers, you can simply use your server's main IP addresses
 for both, the `ping` as well as `target` option.
 
+## The `force_down` option
+
+If you want to force a Failover IP switch, add
+
+```yaml
+force_down: true
+```
+
+to your config, restart heartbeat, wait for the switch, remove it from your
+config and restart heartbeat again.
+
 ## Hooks
 
 You can add your own hooks which will be run after the Failover IP is switched
