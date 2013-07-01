@@ -18,9 +18,11 @@ class FailoverIp
   end
 
   def current_target
-    response = HTTParty.get("#{base_url}/failover/#{failover_ip}", :basic_auth => basic_auth).parsed_response
+    response = HTTParty.get("#{base_url}/failover/#{failover_ip}", :basic_auth => basic_auth)
 
-    response.deep_symbolize_keys[:failover][:active_server_ip]
+    raise unless response.success?
+
+    response.parsed_response.deep_symbolize_keys[:failover][:active_server_ip]
   rescue
     $logger.error "Unable to retrieve the active server ip."
 
@@ -57,7 +59,7 @@ class FailoverIp
 
       old_target = current_target
 
-      HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth)
+      raise unless HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth).success?
 
       Hooks.run failover_ip, old_target, new_ip[:target]
 

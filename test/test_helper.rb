@@ -52,13 +52,13 @@ EOF
   end
 
   def set_current_target(options)
-    parsed_response = { :failover => { :active_server_ip => options[:ip] } }
-
-    response = Hashr.new(:parsed_response => parsed_response)
-
     url = "#{options[:failover_ip].base_url}/failover/#{options[:failover_ip].failover_ip}"
 
     basic_auth = { :username => "username", :password => "password" }
+
+    parsed_response = { :failover => { :active_server_ip => options[:ip] } }
+
+    response = Hashr.new(:parsed_response => parsed_response, :success => true)
 
     HTTParty.expects(:get).at_least_once.with(url, :basic_auth => basic_auth).returns(response)
   end
@@ -70,7 +70,9 @@ EOF
 
     body = { :active_server_ip => options[:to] }
 
-    HTTParty.expects(:post).with(url, :body => body, :basic_auth => basic_auth).returns(200)
+    response = Hashr.new(:success => true)
+
+    HTTParty.expects(:post).with(url, :body => body, :basic_auth => basic_auth).returns(response)
 
     yield
   end
