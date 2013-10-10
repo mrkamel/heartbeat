@@ -236,7 +236,7 @@ $ ln -s /path/to/heartbeat/bin/debian-shutdown heartbeat-shutdown
 $ update-rc.d heartbeat-shutdown defaults
 ```
 
-like you did for bin/debian. When you shutdown your server this init script
+like you do for bin/debian. When you shutdown your server this init script
 will run heartbeat using the config/shutdown.yml config file to switch the
 failover IP in case it currently points to the server you are about to
 shutdown. config/shutdown.yml provides the same options as
