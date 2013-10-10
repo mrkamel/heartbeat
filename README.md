@@ -1,10 +1,4 @@
 
-# Recent changes!
-
-The config has recently changes, as we migrated to httparty.
-You now no longer set the API authentication within the base url.
-Checkout the example above or config/heartbeat.yml
-
 # Heartbeat
 
 Heartbeat is a rather simple daemon which pings a Hetzner Failover IP. If the
@@ -198,6 +192,18 @@ force_down: true
 
 to your config, restart heartbeat, wait for the switch, remove it from your
 config and restart heartbeat again.
+
+## The `only_once` option
+
+To only run a single availability check, add
+
+```yaml
+only_once: true
+```
+
+to your config. Using this option, heartbeat will run only one check instead
+of running into a loop to continously run the checks. After the check,
+heartbeat will terminate.
 
 ## Hooks
 

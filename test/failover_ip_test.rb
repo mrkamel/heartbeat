@@ -99,6 +99,13 @@ class FailoverIpTest < Test::Unit::TestCase
     assert failover_ip.check
   end
 
+  def test_only_once
+    # If you don't run into a loop, this test passes
+
+    FailoverIp.new(:base_url => "https://robot-ws.your-server.de", :basic_auth => { :username => "username", :password => "password" }, :failover_ip => "0.0.0.0",
+      :ping_ip => "127.0.0.1", :ips => [{ :ping => "127.0.0.1", :target => "3.3.3.3" }], :only_once => true).monitor
+  end
+
   def test_base_url
     # Already tested
   end
