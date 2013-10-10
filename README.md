@@ -1,5 +1,15 @@
 
-# Heartbeat
+# Recent changes! aka upgrading heartbeat
+
+1. Hooks have to be put into 'hooks/before' or 'hooks/after' now. Files located
+   in 'hooks' directly are no longer supported and won't run. Checkout the hooks
+   section below.
+
+2. The config has recently changed, as we migrated to httparty. You now no longer
+   set the API authentication within the base url. Checkout the example below or
+   config/heartbeat.yml
+
+# Introduction
 
 Heartbeat is a rather simple daemon which pings a Hetzner Failover IP. If the
 Failover IP is down, Heartbeat will automatically try to set a new active server
@@ -21,9 +31,9 @@ We've used heartbeat for quite some time in production now.
 
 ## Limitations
 
-Heartbeat uses plain-old ping's. Thus, it can only detect full crashes of
-your servers, where the server does no longer reply to a ping. However,
-other monitoring options will probably be added in the future.
+Heartbeat uses plain-old ping's. Thus, it can only detect full crashes of your
+servers, where the server does no longer reply to a ping. However, other
+monitoring options will probably be added in the future.
 
 ## Heartbeat's Behaviour
 
@@ -205,17 +215,53 @@ to your config. Using this option, heartbeat will run only one check instead
 of running into a loop to continously run the checks. After the check,
 heartbeat will terminate.
 
+## Reboots, shutdowns and planned maintenance
+
+If you do planned maintenance and you have to shutdown or reboot your server,
+there are usually two ways to avoid downtime in case the failover IP currently
+points to the server you have to reboot. You can a) switch the failover IP
+manually, either via `force_down: true` or hetzner's robot, etc. or you can b)
+wait for heartbeat to switch the failover IP for you when heartbeat detects
+that the server the failover IP points to is down. However, option a) requires
+manual intervention and option b) results in more downtime than neccessary.
+Thus, heartbeat provides a third way via the bin/debian-shutdown init script.
+This init script will automatically switch the failover IP when you shutdown the
+server.
+
+To install it, run:
+
+```
+$ cd /etc/init.d
+$ ln -s /path/to/heartbeat/bin/debian-shutdown heartbeat-shutdown
+$ update-rc.d heartbeat-shutdown defaults
+```
+
+like you did for bin/debian. When you shutdown your server this init script
+will run heartbeat using the config/shutdown.yml config file to switch the
+failover IP in case it currently points to the server you are about to
+shutdown. config/shutdown.yml provides the same options as
+config/heartbeat.yml, but you have to use it differently, because in this case
+you want heartbeat to monitor the server it runs on by using `ping_ip: [current
+ip]`. At the same time you want heartbeat to assume that the server it
+currently runs on is down by using `force_down: true`, because the server will
+be down soon. Moreover, you want heartbeat to run only a single check by using
+the `only_once: true` option, such that heartbeat will terminate afterwards.
+
+Please note that bin/debian-shutdown is configured to run before other daemons
+are about to stop and you can use hooks to stop other daemons before heartbeat
+switches the failover IP.
+
 ## Hooks
 
-You can add your own hooks which will be run after the Failover IP is switched
-from one active server ip to another in case the first one is down. To add hooks,
-add your shell, ruby or other scripts to the 'hooks' folder within heartbeat's
-root folder. Please note that your scripts must of course be executable by the
-heartbeat daemon. Heartbeat will execute your scripts in alphabetical order and
-will pass the failover ip as first argument, the old active server ip as second
-argument and the new active server ip as the third argument to your scripts.
-Please take a look at examples/hooks/email to learn more about how to write your
-own hooks.
+You can add your own hooks which will be run before or after the Failover IP is
+switched from one active server ip to another in case the first one is down. To
+add hooks, add your shell, ruby or other scripts to the 'hooks/before' or
+'hooks/after' folder within heartbeat's root folder. Please note that your
+scripts must of course be executable by the heartbeat daemon. Heartbeat will
+execute your scripts in alphabetical order and will pass the failover ip as
+first argument, the old active server ip as second argument and the new active
+server ip as the third argument to your scripts. Please take a look at
+examples/hooks/email to learn more about how to write your own hooks.
 
 ## Contributing
 

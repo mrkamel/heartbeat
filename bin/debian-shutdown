@@ -1,6 +1,6 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          heartbeat
+# Provides:          heartbeat-shutdown
 # Required-Start:    $all
 # Required-Stop:     $all
 # Default-Start:     2 3 4 5
@@ -25,25 +25,15 @@ PIDFILE=/tmp/heartbeat.pid
 . /lib/init/vars.sh
 . /lib/lsb/init-functions
 
-do_start()
-{
-  echo "Starting heartbeat."
-
-  start-stop-daemon --group $GROUP --chuid $USER --background --start --quiet --pidfile $PIDFILE --make-pidfile --chdir "$BASE_PATH" --exec $HEARTBEAT
-}
-
 do_stop()
 {
-  echo "Stopping heartbeat."
-
-  start-stop-daemon --group $GROUP --chuid $USER --stop --quiet --pidfile $PIDFILE
-
-  rm -f $PIDFILE
+  echo "Running the heartbeat shutdown script."
+  
+  /bin/su -l $USER -c "$HEARTBEAT --config $BASE_PATH/config/shutdown.yml"
 }
 
 case "$1" in
   start)
-    do_start
   ;;
   stop)
     do_stop
@@ -53,7 +43,7 @@ case "$1" in
     do_start
   ;;
   *)
-    echo "Usage: heartbeat {start|stop|restart|force-reload}"
+    echo "Usage: heartbeat-shutdown {start|stop|restart|force-reload}"
     exit 3
   ;;
 esac

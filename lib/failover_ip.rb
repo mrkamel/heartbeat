@@ -59,9 +59,11 @@ class FailoverIp
 
       old_target = current_target
 
+      Hooks.run_before failover_ip, old_target, new_ip[:target]
+
       raise unless HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth).success?
 
-      Hooks.run failover_ip, old_target, new_ip[:target]
+      Hooks.run_after failover_ip, old_target, new_ip[:target]
 
       return true
     end
@@ -108,9 +110,11 @@ class FailoverIp
 
   def monitor
     loop do
-      check ? sleep(interval) : sleep(300)
+      res = check
 
       return if only_once
+
+      res ? sleep(interval) : sleep(300)
     end
   end
 end

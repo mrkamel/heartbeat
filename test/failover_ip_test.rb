@@ -78,7 +78,11 @@ class FailoverIpTest < Test::Unit::TestCase
 
     set_current_target :failover_ip => failover_ip, :ip => "2.2.2.2"
 
-    assert_hooks_run do
+    assert_hooks_run "before" do
+      assert_switch(:failover_ip => failover_ip, :to => "3.3.3.3") { failover_ip.switch_ips }
+    end
+
+    assert_hooks_run "after" do
       assert_switch(:failover_ip => failover_ip, :to => "3.3.3.3") { failover_ip.switch_ips }
     end
   end

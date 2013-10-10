@@ -1,0 +1,34 @@
+
+# Set your username and password to access the Hetzner API.
+
+base_url: https://robot-ws.your-server.de
+
+basic_auth:
+  username: username
+  password: password
+
+failover_ip: 0.0.0.0
+
+# Use the ip of the server heartbeat is installed on for
+# ping_ip, i.e. the server you're currently connected to :-)
+
+ping_ip: 0.0.0.0
+
+ips:
+  - ping: 1.1.1.1
+    target: 1.1.1.1
+  - ping: 2.2.2.2
+    target: 2.2.2.2
+
+interval: 30
+
+timeout: 10
+
+tries: 3
+
+# We want heartbeat to assume ping_ip is down and we want
+# heartbeat to terminate after the first check
+
+force_down: true
+only_once: true
+
