@@ -39,11 +39,9 @@ case "$1" in
     do_stop
   ;;
   restart|force-reload)
-    do_stop
-    do_start
   ;;
   *)
-    echo "Usage: heartbeat-shutdown {start|stop|restart|force-reload}"
+    echo "Usage: heartbeat-shutdown {stop}"
     exit 3
   ;;
 esac
