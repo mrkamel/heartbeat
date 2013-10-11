@@ -16,13 +16,13 @@ Failover IP is down, Heartbeat will automatically try to set a new active server
 ip for the Failover IP through the API provided by Hetzner. For further details
 of Hetzner Failover IPs, please check
 
-http://wiki.hetzner.de/index.php/Robot_Webservice#POST_.2Ffailover.2F.3Cfailover-ip.3E
+http://wiki.hetzner.de/index.php/Robot_Webservice
 
 ## Motivation
 
 There are plenty of HA tools out there. However, i thought (and think!) they
 are too heavy-weight for this rather simple task. Thus, i wrote Heartbeat to
-automatically switch between load balancers and mySQL servers i run behind
+automatically switch between load balancers and MySQL servers i run behind
 Hetzner Failover IPs in case one becomes down/unavailable.
 
 ## Current State
@@ -74,14 +74,6 @@ Afterwards, you need to install Heartbeat's dependencies:
 ```
 $ cd /path/to/heartbeat
 $ bundle
-```
-
-If the bundle command can't be found, search your system for the bundle
-executeable. This can e.g. happen for Debian Squeeze.
-
-```
-$ cd /path/to/heartbeat
-$ /var/lib/gems/1.8/bin/bundle
 ```
 
 To configure the Hetzner API access, the Failover IP as well as your server's
