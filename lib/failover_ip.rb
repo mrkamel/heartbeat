@@ -88,13 +88,17 @@ class FailoverIp
     self.only_once = options[:only_once] || false
   end
 
+  def responsible_for?(ip)
+    ping_ip == ip || ping_ip == failover_ip
+  end
+
   def check
     if down?
       $logger.info "#{ping_ip} is down."
 
       current = current_ping
 
-      if ping_ip == current
+      if responsible_for?(current)
         switch_ips
       else
         $logger.info "Not responsible for #{current}."

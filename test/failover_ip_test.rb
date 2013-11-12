@@ -110,6 +110,17 @@ class FailoverIpTest < Test::Unit::TestCase
       :ping_ip => "127.0.0.1", :ips => [{ :ping => "127.0.0.1", :target => "3.3.3.3" }], :only_once => true).monitor
   end
 
+  def test_responsible_for?
+    failover_ip = FailoverIp.new(:ping_ip => "1.1.1.1", :failover_ip => "1.1.1.1")
+
+    assert failover_ip.responsible_for?("1.1.1.1")
+
+    failover_ip = FailoverIp.new(:ping_ip => "0.0.0.0", :failover_ip => "1.1.1.1")
+
+    assert failover_ip.responsible_for?("0.0.0.0")
+    refute failover_ip.responsible_for?("1.1.1.1")
+  end
+
   def test_base_url
     # Already tested
   end
