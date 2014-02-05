@@ -9,7 +9,7 @@ require "lib/failover_ip"
 require "optparse"
 require "yaml"
 
-options = { :config => File.expand_path("../../config/heartbeat.yml", __FILE__) }
+options = { :config => File.expand_path("../../config/heartbeat*.yml", __FILE__) }
 
 OptionParser.new do |opts|
   opts.on("--config config") { |config| options[:config] = config }
@@ -21,9 +21,17 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-config = YAML.load(File.read(options[:config]))
-
 $logger = Logger.new(File.expand_path("../../log/heartbeat.log", __FILE__), 3, 10_485_760)
+threads = []
 
-FailoverIp.new(config.deep_symbolize_keys).monitor
+Dir.glob(options[:config]).each do |path|
+  #start each monitor in own thread
+  threads << Thread.new(path) { |path|
+    $logger.info "reading configuration from "+path
+    config = YAML.load(File.read(path))
+    FailoverIp.new(config.deep_symbolize_keys).monitor
+  }
+end
 
+# do not stop until all monitors exit
+threads.each { |t|  t.join }
