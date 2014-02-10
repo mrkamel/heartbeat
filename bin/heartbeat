@@ -1,37 +1,45 @@
 #!/usr/bin/env ruby
 
-$:.unshift File.expand_path("../..", __FILE__)
+$:.unshift File.expand_path("../../lib", __FILE__)
 
 require "rubygems"
 require "bundler/setup"
 require "logger"
-require "lib/failover_ip"
+require "heartbeat"
 require "optparse"
 require "yaml"
+require "hashr"
 
 options = { :config => File.expand_path("../../config/heartbeat*.yml", __FILE__) }
 
 OptionParser.new do |opts|
   opts.on("--config config") { |config| options[:config] = config }
 
-  opts.on("--help") do
+  opts.on "--version" do
+    puts Heartbeat::VERSION
+
+    exit 0
+  end
+
+  opts.on "--help" do
     puts opts
 
     exit 0
   end
 end.parse!
 
-$logger = Logger.new(File.expand_path("../../log/heartbeat.log", __FILE__), 3, 10_485_760)
+Heartbeat.logger = Logger.new(File.expand_path("../../log/heartbeat.log", __FILE__), 3, 10_485_760)
 
 threads = Dir.glob(options[:config]).collect do |path|
   Thread.new path do |file|
-    $logger.info "Reading configuration from #{file}."
+    Heartbeat.logger.info "Reading configuration from #{file}."
 
-    config = YAML.load(File.read(file))
+    Heartbeat.config = Hashr.new(YAML.load_file(file))
+    Heartbeat.config.ips = Heartbeat.config.ips.collect { |ip| Hashr.new ip }
 
-    FailoverIp.new(config.deep_symbolize_keys).monitor
+    Heartbeat::Controller.new.start
   end
 end
 
-# do not stop until all monitors exit
-threads.each &:join
+threads.each(&:join)
+

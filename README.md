@@ -260,13 +260,14 @@ server ip as the third argument to your scripts. Please take a look at
 examples/hooks/email to learn more about how to write your own hooks.
 
 ## Multiple failover IPs
+
 Heartbeat allows you to monitor multiple failover IPs independently by providing
 multiple config files. For each file
-named like `config/heartbeat*.yml` the daemon will start a separate thread. 
+named like `config/heartbeat*.yml` the daemon will start a separate thread.
 
 For example you could create `config/heartbeat0000.yml` to monitor your first
 failover IP `0.0.0.0` and `config/heartbeat5555.yml` to monitor your second
-failover IP `5.5.5.5`. 
+failover IP `5.5.5.5`.
 
 ## Contributing
 
