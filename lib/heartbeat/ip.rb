@@ -8,9 +8,13 @@ module Heartbeat
     end
 
     def up?
-      `ping -W #{Heartbeat.config.timeout || 10} -c #{Heartbeat.config.tries || 3} #{ip}`
+      Heartbeat.config.tries.times.any? do |i|
+        `ping -W #{Heartbeat.config.timeout} -c 1 #{ip}`
 
-      $?.success?
+        Heartbeat.logger.info("ping #{i + 1}/#{Heartbeat.config.tries} of #{ip} failed") unless $?.success?
+
+        $?.success?
+      end
     end 
 
     def down?

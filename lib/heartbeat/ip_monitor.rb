@@ -21,11 +21,11 @@ module Heartbeat
 
     def monitor_once
       if check
-        sleep Heartbeat.config.interval || 30
+        sleep Heartbeat.config.interval
       else
         yield
 
-        sleep Heartbeat.config.down_interval || 300
+        sleep Heartbeat.config.down_interval
       end
     end
 
