@@ -53,11 +53,11 @@ tried out next. When the last ip of the list is reached, the first one is
 tried.
 
 After Heartbeat switched to another active server ip by using Hetzner's API,
-Heartbeat will sleep for 300 seconds. This delay has been chosen to avoid
-switching to different ips too often. Heartbeat will as well sleep for 300
-seconds if the Hetzner API call fails, because Heartbeat assumes that the
-server Heatbeat is running on is itself currently down or separated from the
-network in some way.
+Heartbeat will sleep for 300 seconds (`down_interval`). This delay has been
+chosen to avoid switching to different ips too often. Heartbeat will as well
+sleep for 300 seconds if the Hetzner API call fails, because Heartbeat assumes
+that the server Heatbeat is running on is itself currently down or separated
+from the network in some way.
 
 ## Setup
 
@@ -96,7 +96,10 @@ ips:
   - ping: 10.0.1.1
     target: 10.0.1.2
 
+hooks_dir: hooks
+
 interval: 30
+down_interval: 300
 
 timeout: 10
 
@@ -252,22 +255,30 @@ switches the failover IP.
 You can add your own hooks which will be run before or after the Failover IP is
 switched from one active server ip to another in case the first one is down. To
 add hooks, add your shell, ruby or other scripts to the 'hooks/before' or
-'hooks/after' folder within heartbeat's root folder. Please note that your
-scripts must of course be executable by the heartbeat daemon. Heartbeat will
-execute your scripts in alphabetical order and will pass the failover ip as
-first argument, the old active server ip as second argument and the new active
-server ip as the third argument to your scripts. Please take a look at
+'hooks/after' folder within heartbeat's root folder. The base directory can be
+changed by using the `hooks_dir` config option, which needs to be a relative
+path originating at your heartbeat root directory. The `hooks_dir` option is
+useful in case you use a single heartbeat instance to monitor multiple failover
+ips, especially if you need to run any host-specific hooks. Please note that
+your scripts must of course be executable by the heartbeat daemon. Heartbeat
+will execute your scripts in alphabetical order and will pass the failover ip
+as first argument, the old active server ip as second argument and the new
+active server ip as the third argument to your scripts. Please take a look at
 examples/hooks/email to learn more about how to write your own hooks.
 
 ## Multiple failover IPs
 
-Heartbeat allows you to monitor multiple failover IPs independently by providing
-multiple config files. For each file
-named like `config/heartbeat*.yml` the daemon will start a separate thread.
+Heartbeat allows you to monitor multiple failover IPs independently by
+providing multiple config files. For each file named like
+`config/heartbeat*.yml` the daemon will start a separate thread.
 
-For example you could create `config/heartbeat0000.yml` to monitor your first
-failover IP `0.0.0.0` and `config/heartbeat5555.yml` to monitor your second
-failover IP `5.5.5.5`.
+For example you could create `config/heartbeat-0.0.0.0.yml` to monitor your
+first failover IP `0.0.0.0` and `config/heartbeat-5.5.5.5.yml` to monitor your
+second failover IP `5.5.5.5`.
+
+Please take special care in case you monitor multiple failover ips while using
+special host specific hooks. Check out the `hooks_dir` option within the Hooks
+section to only execute certain hooks when switching a specific failover ip.
 
 ## Contributing
 
