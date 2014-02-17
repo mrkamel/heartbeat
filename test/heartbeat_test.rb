@@ -10,7 +10,7 @@ class HeartbeatTest < Test::Unit::TestCase
 
     begin
       Heartbeat.config = Hashr.new(:key => :value)
-      assert_equal Hashr.new(:interval => 30, :down_interval => 300, :timeout => 10, :tries => 3, :key => :value), Heartbeat.config
+      assert_equal Hashr.new(:hooks_dir => "hooks", :interval => 30, :down_interval => 300, :timeout => 10, :tries => 3, :key => :value), Heartbeat.config
     ensure
       Heartbeat.config = config
     end

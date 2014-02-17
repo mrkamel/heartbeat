@@ -9,7 +9,7 @@ require "hashr"
 
 module Heartbeat
   def self.config=(config)
-    Thread.current[:config] = Hashr.new(:interval => 30, :down_interval => 300, :timeout => 10, :tries => 3).merge(config)
+    Thread.current[:config] = Hashr.new(:hooks_dir => "hooks", :interval => 30, :down_interval => 300, :timeout => 10, :tries => 3).merge(config)
   end
 
   def self.config

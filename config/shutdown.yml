@@ -20,7 +20,10 @@ ips:
   - ping: 2.2.2.2
     target: 2.2.2.2
 
+hooks_dir: hooks
+
 interval: 30
+down_interval: 300
 
 timeout: 10
 

@@ -17,8 +17,8 @@ Heartbeat.logger = Logger.new(File.expand_path("../../log/test.log", __FILE__))
 class LeaveLoopException < Exception; end
 
 class Test::Unit::TestCase
-  def assert_hooks_run(kind)
-    hooks = File.expand_path("../../hooks", __FILE__)
+  def assert_hooks_run(dir, kind)
+    hooks = File.expand_path("../../#{dir}", __FILE__)
 
     open(File.join(hooks, kind, "hook1"), "w") do |stream|
       stream.write <<EOF
