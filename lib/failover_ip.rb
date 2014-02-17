@@ -8,9 +8,13 @@ class FailoverIp
   attr_accessor :base_url, :basic_auth, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries, :force_down, :only_once
 
   def ping(ip = ping_ip)
-    `ping -W #{timeout} -c #{tries} #{ip}`
+    tries.times.any? do |i|
+      `ping -W #{timeout} -c 1 #{ip}`
 
-    $?.success?
+      $logger.info("ping #{i + 1}/#{tries} of #{ping_ip} failed.") unless $?.success?
+
+      $?.success?
+    end
   end
 
   def down?

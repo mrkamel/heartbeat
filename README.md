@@ -106,7 +106,11 @@ tries: 3
 The `ping_ip` option is explained below in detail. The `interval` option
 specifies how long to sleep between the ping attempts. The `timeout` specifies
 the timeout to use for a ping and `tries` specifies how many pings to send to
-the ip which is about to be tested.
+the ip which is about to be tested. Thus, by default, every 30 seconds heartbeat
+sends a ping to `ping_ip`. If heartbeat does not receive a response within 10
+seconds, heartbeat tries again, 3 times. If the host is down for 30 seconds
+(3 `tries` * 10 seconds `timeout`), heartbeat will consider the host to be down
+and will begin to switch the failover ip to a new target.
 
 Heartbeat provides an init script for Debian you can use to start Heartbeat at
 boot time. However, you have to symlink to it yourself. It is *important* to
