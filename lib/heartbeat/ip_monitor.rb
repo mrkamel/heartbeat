@@ -30,7 +30,7 @@ module Heartbeat
     end
 
     def monitor(&block)
-      loop { monitor_once &block }
+      loop { monitor_once(&block) }
     end
   end
 end
