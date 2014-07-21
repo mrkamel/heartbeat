@@ -33,7 +33,7 @@ module Heartbeat
     end 
 
     def switch_to(target)
-      Heartbeat.logger.info "Switching to #{target}."
+      Heartbeat.logger.info "Switching to #{target}"
 
       old_target = current_target
 
