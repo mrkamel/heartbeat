@@ -1,14 +1,4 @@
 
-# Recent changes! aka upgrading heartbeat
-
-1. Hooks have to be put into 'hooks/before' or 'hooks/after' now. Files located
-   in 'hooks' directly are no longer supported and won't run. Checkout the hooks
-   section below.
-
-2. The config has recently changed, as we migrated to httparty. You now no longer
-   set the API authentication within the base url. Checkout the example below or
-   config/heartbeat.yml
-
 # Introduction
 
 Heartbeat is a rather simple daemon which pings a Hetzner Failover IP. If the
