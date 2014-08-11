@@ -1,19 +1,19 @@
 
 # Introduction
 
-Heartbeat is a rather simple daemon which pings a Hetzner Failover IP. If the
-Failover IP is down, Heartbeat will automatically try to set a new active server
-ip for the Failover IP through the API provided by Hetzner. For further details
-of Hetzner Failover IPs, please check
+Heartbeat pings a Hetzner Failover IP. If the Failover IP is down, Heartbeat
+will automatically try to set a new active server ip for the Failover IP
+through the API provided by Hetzner. For further details of Hetzner Failover
+IPs, please check
 
 http://wiki.hetzner.de/index.php/Robot_Webservice
 
 ## Motivation
 
-There are plenty of HA tools out there. However, i thought (and think!) they
-are too heavy-weight for this rather simple task. Thus, i wrote Heartbeat to
-automatically switch between load balancers and MySQL servers i run behind
-Hetzner Failover IPs in case one becomes down/unavailable.
+There many HA tools out there. However, they are often too heavy-weight for
+this rather simple task. Thus, Heartbeat automatically switches between load
+balancers and other services you run behind Hetzner Failover IPs in case one
+becomes down/unavailable.
 
 ## Current State
 
