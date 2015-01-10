@@ -11,7 +11,7 @@ class FailoverIp
     tries.times.any? do |i|
       `ping -W #{timeout} -c 1 #{ip}`
 
-      $logger.info("ping #{i + 1}/#{tries} of #{ping_ip} failed.") unless $?.success?
+      $logger.info("ping #{i + 1}/#{tries} of #{ping_ip} failed") unless $?.success?
 
       $?.success?
     end
@@ -28,7 +28,7 @@ class FailoverIp
 
     response.parsed_response.deep_symbolize_keys[:failover][:active_server_ip]
   rescue
-    $logger.error "Unable to retrieve the active server ip."
+    $logger.error "Unable to retrieve the active server ip for #{failover_ip}"
 
     nil
   end
@@ -52,14 +52,14 @@ class FailoverIp
       end
     end
 
-    $logger.error "No more ip's available."
+    $logger.error "No more ip's available for #{failover_ip}"
 
     nil
   end
 
   def switch_ips
     if new_ip = next_ip
-      $logger.info "Switching to #{new_ip[:target]}."
+      $logger.info "Switching #{failover_ip} to #{new_ip[:target]}"
 
       old_target = current_target
 
@@ -74,7 +74,7 @@ class FailoverIp
 
     false
   rescue
-    $logger.error "Unable to set a new active server ip."
+    $logger.error "Unable to set a new active server ip for #{failover_ip}"
 
     false
   end
@@ -98,19 +98,19 @@ class FailoverIp
 
   def check
     if down?
-      $logger.info "#{ping_ip} is down."
+      $logger.info "#{ping_ip} is down"
 
       current = current_ping
 
       if responsible_for?(current)
         switch_ips
       else
-        $logger.info "Not responsible for #{current}."
+        $logger.info "Not responsible for #{current}"
       end
 
       false
     else
-      $logger.info "#{ping_ip} is up."
+      $logger.info "#{ping_ip} is up"
 
       true
     end
