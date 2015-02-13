@@ -9,11 +9,19 @@ class FailoverIp
 
   def ping(ip = ping_ip)
     tries.times.any? do |i|
+      start = Time.now.to_f
+
       `ping -W #{timeout} -c 1 #{ip}`
 
-      $logger.info("ping #{i + 1}/#{tries} of #{ping_ip} failed") unless $?.success?
+      success = $?.success?
 
-      $?.success?
+      $logger.info("ping #{i + 1}/#{tries} of #{ping_ip} failed") unless success
+
+      rest = [timeout - (Time.now.to_f - start), timeout].min
+
+      sleep(rest) if rest > 0 && !success
+
+      success
     end
   end
 
