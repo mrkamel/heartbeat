@@ -4,7 +4,7 @@ require "httparty"
 require "lib/hooks"
 
 class FailoverIp
-  attr_accessor :base_url, :basic_auth, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries, :force_down, :only_once
+  attr_accessor :base_url, :basic_auth, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries, :force_down, :only_once, :dry
 
   def ping(ip = ping_ip)
     tries.times.any? do |i|
@@ -70,11 +70,15 @@ class FailoverIp
 
       old_target = current_target
 
-      Hooks.run_before failover_ip, old_target, new_ip[:target]
+      Hooks.run_before failover_ip, old_target, new_ip[:target], dry
 
-      raise unless HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth).success?
+      if !dry
+        raise unless HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth).success?
+      else
+        $logger.info "Dry run: would have switched #{failover_ip} to #{new_ip[:target]}"
+      end
 
-      Hooks.run_after failover_ip, old_target, new_ip[:target]
+      Hooks.run_after failover_ip, old_target, new_ip[:target], dry
 
       return true
     end
@@ -97,6 +101,7 @@ class FailoverIp
     self.tries = options[:tries] || 3
     self.force_down = options[:force_down] || false
     self.only_once = options[:only_once] || false
+    self.dry = options[:dry] || false
   end
 
   def responsible_for?(ip)
