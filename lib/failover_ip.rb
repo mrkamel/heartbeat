@@ -36,7 +36,7 @@ class FailoverIp
 
     response.parsed_response.deep_symbolize_keys[:failover][:active_server_ip]
   rescue
-    $logger.error "Unable to retrieve the active server ip for #{failover_ip}"
+    $logger.error "Unable to retrieve the active server ip for #{failover_ip} from #{base_url}/failover/#{failover_ip}"
 
     nil
   end
@@ -86,7 +86,7 @@ class FailoverIp
 
     false
   rescue
-    $logger.error "Unable to set a new active server ip for #{failover_ip}"
+    $logger.error "Unable to set a new active server ip for #{failover_ip} via POST to #{base_url}/failover/#{failover_ip}, :body => { :active_server_ip => #{new_ip[:target]} }, :basic_auth => #{basic_auth}"
 
     false
   end
