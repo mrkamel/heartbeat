@@ -33,7 +33,9 @@ class FailoverIp
 
     raise unless response.success?
 
-    response.parsed_response["failover"]["active_server_ip"]
+    active_server_ip = response.parsed_response["failover"]["active_server_ip"]
+    $logger.info "Ip of active server: #{active_server_ip}"
+    active_server_ip
   rescue
     $logger.error "Unable to retrieve the active server ip for #{failover_ip} from #{base_url}/failover/#{failover_ip}"
 
