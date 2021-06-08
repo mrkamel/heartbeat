@@ -75,6 +75,7 @@ class FailoverIp
 
       if !dry
         raise unless HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth).success?
+        $logger.info "Switch #{failover_ip} to #{new_ip[:target]} completed"
       else
         $logger.info "Dry run: would have switched #{failover_ip} to #{new_ip[:target]}"
       end
