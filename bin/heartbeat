@@ -21,7 +21,12 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-$logger = Logger.new(File.expand_path("../log/heartbeat.log", __dir__), 3, 10_485_760)
+$logger = if ENV['HEARTBEAT_LOG'] == "STDOUT"
+            Logger.new(STDOUT)
+          else
+            logfile = ENV['HEARTBEAT_LOG'] || File.expand_path("../log/heartbeat.log", __dir__)
+            Logger.new(logfile, 3, 10_485_760)
+          end
 
 threads = Dir.glob(options[:config]).collect do |path|
   Thread.new path do |file|
