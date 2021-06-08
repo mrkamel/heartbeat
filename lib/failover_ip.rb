@@ -56,7 +56,12 @@ class FailoverIp
       (ips.size - 1).times do |i|
         ip = ips[(index + i + 1) % ips.size]
 
-        return ip if ping(ip[:ping])
+        if ping(ip[:ping])
+          return ip
+        else
+          $logger.info "Not selecting #{ip[:target]} to switch to since it doesn't ping on #{ip[:ping]}"
+        end
+
       end
     end
 
