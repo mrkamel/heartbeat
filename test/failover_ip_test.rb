@@ -5,7 +5,7 @@ require "test/test_helper"
 require "stringio"
 require "lib/failover_ip"
 
-class FailoverIpTest < Test::Unit::TestCase
+class FailoverIpTest < BaseTest
   def test_ping
     assert FailoverIp.new(:ping_ip => "127.0.0.1").ping
   end
@@ -90,6 +90,9 @@ class FailoverIpTest < Test::Unit::TestCase
   def test_check_with_failover
     failover_ip = FailoverIp.new(:base_url => "https://robot-ws.your-server.de", :basic_auth => { :username => "username", :password => "password" }, :failover_ip => "0.0.0.0",
       :ping_ip => "1.1.1.1", :ips => [{ :ping => "1.1.1.1", :target => "2.2.2.2" }, { :ping => "127.0.0.1", :target => "3.3.3.3" }])
+
+    failover_ip.stubs(:ping).returns(false)
+    failover_ip.stubs(:ping).with("127.0.0.1").returns(true)
 
     set_current_target :failover_ip => failover_ip, :ip => "2.2.2.2"
 

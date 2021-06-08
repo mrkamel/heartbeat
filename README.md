@@ -268,6 +268,14 @@ For example you could create `config/heartbeat0000.yml` to monitor your first
 failover IP `0.0.0.0` and `config/heartbeat5555.yml` to monitor your second
 failover IP `5.5.5.5`. 
 
+## Running tests
+
+To run the tests, simply run:
+
+```
+$ bundle exec rake test
+```
+
 ## Contributing
 
 1. Fork it
