@@ -117,7 +117,7 @@ class FailoverIp
       if responsible_for?(current)
         switch_ips
       else
-        $logger.info "Not responsible for #{current}"
+        $logger.info "Not responsible for IP #{current}"
       end
 
       false
