@@ -1,6 +1,6 @@
 
 class Hooks
-  def self.run(kind, failover_ip, old_ip, new_ip, dry)
+  def self.run(kind, failover_ip, old_ip, new_ip, dry = false)
     Dir[File.expand_path("../../hooks/#{kind}/*", __FILE__)].sort.each do |file|
       if File.executable?(file)
         if !dry
@@ -12,11 +12,11 @@ class Hooks
     end
   end
 
-  def self.run_before(failover_ip, old_ip, new_ip, dry)
+  def self.run_before(failover_ip, old_ip, new_ip, dry = false)
     run "before", failover_ip, old_ip, new_ip, dry
   end
 
-  def self.run_after(failover_ip, old_ip, new_ip, dry)
+  def self.run_after(failover_ip, old_ip, new_ip, dry = false)
     run "after", failover_ip, old_ip, new_ip, dry
   end
 end
