@@ -59,6 +59,20 @@ EOF
     end
   end
 
+  def assert_hooks_do_not_run(kind)
+    hooks = File.expand_path("../hooks", __dir__)
+    create_hooks(kind, hooks)
+
+    begin
+      yield
+
+      assert !File.exist?("/tmp/hook1.txt")
+      assert !File.exist?("/tmp/hook2.txt")
+    ensure
+      remove_hooks(kind, hooks)
+    end
+  end
+
   def set_current_target(options)
     url = "#{options[:failover_ip].base_url}/failover/#{options[:failover_ip].failover_ip}"
 
