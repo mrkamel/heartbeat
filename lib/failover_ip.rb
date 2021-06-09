@@ -39,6 +39,7 @@ class FailoverIp
     active_server_ip
   rescue
     $logger.error "Unable to retrieve the active server ip for #{failover_ip} from #{base_url}/failover/#{failover_ip}"
+    $logger.error "Response from Hetzner Robot API was: #{response}"
 
     nil
   end
@@ -81,7 +82,8 @@ class FailoverIp
       Hooks.run_before failover_ip, old_target, new_ip[:target], dry
 
       if !dry
-        raise unless HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth).success?
+        response = HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth).success?
+        raise unless response.success?
         $logger.info "Switch #{failover_ip} to #{new_ip[:target]} completed"
       else
         $logger.info "Dry run: would have switched #{failover_ip} to #{new_ip[:target]}"
@@ -95,6 +97,7 @@ class FailoverIp
     false
   rescue
     $logger.error "Unable to set a new active server ip for #{failover_ip} via POST to #{base_url}/failover/#{failover_ip}, :body => { :active_server_ip => #{new_ip[:target]} }, :basic_auth => #{basic_auth}"
+    $logger.error "Response from Hetzner Robot API was: #{response}"
 
     false
   end
