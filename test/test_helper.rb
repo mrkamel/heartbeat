@@ -9,8 +9,7 @@ require "logger"
 $logger = Logger.new(File.expand_path("../../log/test.log", __FILE__))
 
 class Test::Unit::TestCase
-  def assert_hooks_run(kind)
-    hooks = File.expand_path("../../hooks", __FILE__)
+  def create_hooks(kind, hooks)
 
     open(File.join(hooks, kind, "hook1"), "w") do |stream|
       stream.write <<EOF
@@ -31,6 +30,16 @@ EOF
     end
 
     FileUtils.chmod 0755, File.join(hooks, kind, "hook2")
+  end
+
+  def remove_hooks(kind, hooks)
+      FileUtils.rm_f File.join(hooks, kind, "hook1")
+      FileUtils.rm_f File.join(hooks, kind, "hook2")
+  end
+
+  def assert_hooks_run(kind)
+    hooks = File.expand_path("../../hooks", __FILE__)
+    create_hooks
 
     begin
       yield
@@ -43,8 +52,7 @@ EOF
       assert File.exists?("/tmp/hook2.txt")
       assert File.read("/tmp/hook2.txt") =~ pattern
     ensure
-      FileUtils.rm_f File.join(hooks, kind, "hook1")
-      FileUtils.rm_f File.join(hooks, kind, "hook2")
+      remove_hooks(kind, hooks)
 
       FileUtils.rm_f "/tmp/hook1.txt"
       FileUtils.rm_f "/tmp/hook2.txt"
