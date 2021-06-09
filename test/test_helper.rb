@@ -99,6 +99,12 @@ EOF
     yield
   end
 
+  def assert_no_switch(options)
+    HTTParty.expects(:post).never()
+
+    yield
+  end
+
   def refute(boolean)
     assert !boolean
   end
