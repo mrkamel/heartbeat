@@ -39,7 +39,7 @@ EOF
 
   def assert_hooks_run(kind)
     hooks = File.expand_path("../../hooks", __FILE__)
-    create_hooks
+    create_hooks(kind, hooks)
 
     begin
       yield
