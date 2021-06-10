@@ -1,14 +1,14 @@
 
-require "rubygems"
 require "bundler/setup"
-require "test/unit"
-require "mocha/setup"
+require "minitest/autorun"
+require "mocha/minitest"
+require "ostruct"
 require "fileutils"
 require "logger"
 
 $logger = Logger.new(File.expand_path("../../log/test.log", __FILE__))
 
-class Test::Unit::TestCase
+class BaseTest < Minitest::Test
   def assert_hooks_run(kind)
     hooks = File.expand_path("../../hooks", __FILE__)
 
@@ -37,10 +37,10 @@ EOF
 
       pattern = /\A[0-9]+\.[0-9]+\.[0-9]\.[0-9]+, [0-9]+\.[0-9]+\.[0-9]\.[0-9]+, [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\Z/
 
-      assert File.exists?("/tmp/hook1.txt")
+      assert File.exist?("/tmp/hook1.txt")
       assert File.read("/tmp/hook1.txt") =~ pattern
 
-      assert File.exists?("/tmp/hook2.txt")
+      assert File.exist?("/tmp/hook2.txt")
       assert File.read("/tmp/hook2.txt") =~ pattern
     ensure
       FileUtils.rm_f File.join(hooks, kind, "hook1")
@@ -56,9 +56,9 @@ EOF
 
     basic_auth = { :username => "username", :password => "password" }
 
-    parsed_response = { :failover => { :active_server_ip => options[:ip] } }
+    parsed_response = { "failover" => { "active_server_ip" => options[:ip] } }
 
-    response = Hashr.new(:parsed_response => parsed_response, :success => true)
+    response = OpenStruct.new(:parsed_response => parsed_response, :success? => true)
 
     HTTParty.expects(:get).at_least_once.with(url, :basic_auth => basic_auth).returns(response)
   end
@@ -70,7 +70,7 @@ EOF
 
     body = { :active_server_ip => options[:to] }
 
-    response = Hashr.new(:success => true)
+    response = OpenStruct.new(:success? => true)
 
     HTTParty.expects(:post).with(url, :body => body, :basic_auth => basic_auth).returns(response)
 

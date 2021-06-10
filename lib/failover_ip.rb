@@ -2,7 +2,6 @@
 require "json"
 require "httparty"
 require "lib/hooks"
-require "hashr"
 
 class FailoverIp
   attr_accessor :base_url, :basic_auth, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries, :force_down, :only_once
@@ -34,7 +33,7 @@ class FailoverIp
 
     raise unless response.success?
 
-    response.parsed_response.deep_symbolize_keys[:failover][:active_server_ip]
+    response.parsed_response["failover"]["active_server_ip"]
   rescue
     $logger.error "Unable to retrieve the active server ip for #{failover_ip}"
 
