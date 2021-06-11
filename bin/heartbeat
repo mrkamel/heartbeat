@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
-$:.unshift File.expand_path("../..", __FILE__)
+$:.unshift File.expand_path("..", __dir__)
 
 require "rubygems"
 require "bundler/setup"
 require "logger"
-require "lib/failover_ip"
 require "optparse"
-require "yaml"
+require "lib/failover_ip"
+require "lib/config"
 
-options = { :config => File.expand_path("../../config/heartbeat*.yml", __FILE__) }
+options = { config: File.expand_path("../config/heartbeat*.yml", __dir__) }
 
 OptionParser.new do |opts|
   opts.on("--config config") { |config| options[:config] = config }
@@ -21,17 +21,15 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-$logger = Logger.new(File.expand_path("../../log/heartbeat.log", __FILE__), 3, 10_485_760)
+$logger = Logger.new(File.expand_path("../log/heartbeat.log", __dir__), 3, 10_485_760)
 
 threads = Dir.glob(options[:config]).collect do |path|
   Thread.new path do |file|
     $logger.info "Reading configuration from #{file}."
 
-    config = YAML.load(File.read(file))
-
-    FailoverIp.new(config.deep_symbolize_keys).monitor
+    FailoverIp.new(Config.load(file)).monitor
   end
 end
 
 # do not stop until all monitors exit
-threads.each &:join
+threads.each(&:join)

@@ -6,11 +6,11 @@ require "ostruct"
 require "fileutils"
 require "logger"
 
-$logger = Logger.new(File.expand_path("../../log/test.log", __FILE__))
+$logger = Logger.new(File.expand_path("../log/test.log", __dir__))
 
 class BaseTest < Minitest::Test
   def assert_hooks_run(kind)
-    hooks = File.expand_path("../../hooks", __FILE__)
+    hooks = File.expand_path("../hooks", __dir__)
 
     open(File.join(hooks, kind, "hook1"), "w") do |stream|
       stream.write <<EOF

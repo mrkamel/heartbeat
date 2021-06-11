@@ -1,5 +1,5 @@
 
-$:.unshift File.expand_path("../..", __FILE__)
+$:.unshift File.expand_path("..", __dir__)
 
 require "test/test_helper"
 require "lib/hooks"
