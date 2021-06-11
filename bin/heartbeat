@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-$:.unshift File.expand_path("../..", __FILE__)
+$:.unshift File.expand_path("..", __dir__)
 
 require "rubygems"
 require "bundler/setup"
@@ -9,7 +9,7 @@ require "optparse"
 require "lib/failover_ip"
 require "lib/config"
 
-options = { config: File.expand_path("../../config/heartbeat*.yml", __FILE__) }
+options = { config: File.expand_path("../config/heartbeat*.yml", __dir__) }
 
 OptionParser.new do |opts|
   opts.on("--config config") { |config| options[:config] = config }
@@ -21,7 +21,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-$logger = Logger.new(File.expand_path("../../log/heartbeat.log", __FILE__), 3, 10_485_760)
+$logger = Logger.new(File.expand_path("../log/heartbeat.log", __dir__), 3, 10_485_760)
 
 threads = Dir.glob(options[:config]).collect do |path|
   Thread.new path do |file|
