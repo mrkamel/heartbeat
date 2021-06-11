@@ -6,11 +6,10 @@ require "rubygems"
 require "bundler/setup"
 require "logger"
 require "optparse"
-require "yaml"
 require "lib/failover_ip"
-require "lib/config_helper"
+require "lib/config"
 
-options = { :config => File.expand_path("../../config/heartbeat*.yml", __FILE__) }
+options = { config: File.expand_path("../../config/heartbeat*.yml", __FILE__) }
 
 OptionParser.new do |opts|
   opts.on("--config config") { |config| options[:config] = config }
@@ -28,9 +27,7 @@ threads = Dir.glob(options[:config]).collect do |path|
   Thread.new path do |file|
     $logger.info "Reading configuration from #{file}."
 
-    config = ConfigHelper.deep_symbolize(YAML.load_file(file))
-
-    FailoverIp.new(config).monitor
+    FailoverIp.new(Config.load(file)).monitor
   end
 end
 
