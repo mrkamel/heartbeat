@@ -1,0 +1,20 @@
+on: push
+name: test
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+        - 2.6
+        - 2.7
+        - 3.0
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+    - run: gem install bundler
+    - run: bundle
+    - run: bundle exec rake test
