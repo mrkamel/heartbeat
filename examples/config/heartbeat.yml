@@ -1,0 +1,25 @@
+
+# Set your username and password to access the Hetzner API.
+
+base_url: https://robot-ws.your-server.de
+
+basic_auth:
+  username: username
+  password: password
+
+failover_ip: 0.0.0.0
+
+ping_ip: 0.0.0.0
+
+ips:
+  - ping: 1.1.1.1
+    target: 1.1.1.1
+  - ping: 2.2.2.2
+    target: 2.2.2.2
+
+interval: 30
+
+timeout: 10
+
+tries: 3
+

@@ -5,9 +5,10 @@ $:.unshift File.expand_path("../..", __FILE__)
 require "rubygems"
 require "bundler/setup"
 require "logger"
-require "lib/failover_ip"
 require "optparse"
 require "yaml"
+require "lib/failover_ip"
+require "lib/config_helper"
 
 options = { :config => File.expand_path("../../config/heartbeat*.yml", __FILE__) }
 
@@ -27,11 +28,11 @@ threads = Dir.glob(options[:config]).collect do |path|
   Thread.new path do |file|
     $logger.info "Reading configuration from #{file}."
 
-    config = YAML.load(File.read(file))
+    config = ConfigHelper.deep_symbolize(YAML.load_file(file))
 
-    FailoverIp.new(config.deep_symbolize_keys).monitor
+    FailoverIp.new(config).monitor
   end
 end
 
 # do not stop until all monitors exit
-threads.each &:join
+threads.each(&:join)
