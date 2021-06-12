@@ -217,7 +217,7 @@ If you want the `heartbeat` to neither trigger an IP failover nor to
 run the hooks, but just to tell you what it *would* do, then add
 
 ```yaml
-dry: false
+dry: true
 ```
 
 to your config.
