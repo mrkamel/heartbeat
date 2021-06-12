@@ -225,7 +225,7 @@ to your config.
 ## The `HEARTBEAT_LOG` environment variable
 
 If you want `heartbeat` to log somewhere else than to
-`$WHERE_THE_BINARY_IS/../log` the set this environment
+`$WHERE_THE_BINARY_IS/../log` then set this environment
 variable:
 
 ```shell
