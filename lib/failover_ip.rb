@@ -61,7 +61,7 @@ class FailoverIp
         if ping(ip[:ping])
           return ip
         else
-          $logger.info "Not selecting #{ip[:target]} to switch to since it doesn't ping on #{ip[:ping]}"
+          $logger.info "Not selecting #{ip[:target]} to switch to since it doesn't respond to ping on #{ip[:ping]}"
         end
 
       end
