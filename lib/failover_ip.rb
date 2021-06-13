@@ -34,7 +34,7 @@ class FailoverIp
     raise unless response.success?
 
     active_server_ip = response.parsed_response["failover"]["active_server_ip"]
-    $logger.info "Ip of active server: #{active_server_ip}"
+    $logger.info "Fetched ip of active server: #{active_server_ip}"
     active_server_ip
   rescue
     $logger.error "Unable to retrieve the active server ip for #{failover_ip} from #{base_url}/failover/#{failover_ip}"
@@ -95,7 +95,7 @@ class FailoverIp
 
     false
   rescue
-    $logger.error "Unable to set a new active server ip for #{failover_ip} via POST to #{base_url}/failover/#{failover_ip}, :body => { :active_server_ip => #{new_ip[:target]} }, :basic_auth => #{basic_auth}"
+    $logger.error "Unable to set #{new_ip[:target]} as new active server ip for #{failover_ip} via POST to #{base_url}/failover/#{failover_ip}, with :basic_auth => #{basic_auth}"
     $logger.error "Response from Hetzner Robot API was: #{response}"
 
     false
