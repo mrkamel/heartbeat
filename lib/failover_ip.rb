@@ -80,12 +80,12 @@ class FailoverIp
 
       Hooks.run_before failover_ip, old_target, new_ip[:target], dry
 
-      if !dry
+      if dry
+        $logger.info "Dry run: would have switched #{failover_ip} to #{new_ip[:target]}"
+      else
         response = HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth)
         raise unless response.success?
         $logger.info "Switch #{failover_ip} to #{new_ip[:target]} completed"
-      else
-        $logger.info "Dry run: would have switched #{failover_ip} to #{new_ip[:target]}"
       end
 
       Hooks.run_after failover_ip, old_target, new_ip[:target], dry
