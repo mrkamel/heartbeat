@@ -211,6 +211,33 @@ to your config. Using this option, heartbeat will run only one check instead
 of running into a loop to continously run the checks. After the check,
 heartbeat will terminate.
 
+## The `dry` option
+
+If you want the `heartbeat` to neither trigger an IP failover nor to
+run the hooks, but just to tell you what it *would* do, then add
+
+```yaml
+dry: true
+```
+
+to your config.
+
+## The `HEARTBEAT_LOG` environment variable
+
+If you want `heartbeat` to log somewhere else than to
+`$WHERE_THE_BINARY_IS/../log` then set this environment
+variable:
+
+```shell
+HEARTBEAT_LOG=/var/log/heartbeat/log
+```
+
+or
+
+```shell
+HEARTBEAT_LOG=STDOUT
+```
+
 ## Reboots, shutdowns and planned maintenance
 
 If you do planned maintenance and you have to shutdown or reboot your server,

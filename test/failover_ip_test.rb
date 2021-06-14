@@ -87,6 +87,21 @@ class FailoverIpTest < BaseTest
     end
   end
 
+  def test_switch_ips_dry
+    failover_ip = FailoverIp.new(:base_url => "https://robot-ws.your-server.de", :basic_auth => { :username => "username", :password => "password" }, :failover_ip => "0.0.0.0",
+      :ips => [{ :ping => "1.1.1.1", :target => "2.2.2.2" }, { :ping => "127.0.0.1", :target => "3.3.3.3" }], :dry => true )
+
+    set_current_target :failover_ip => failover_ip, :ip => "2.2.2.2"
+
+    assert_hooks_do_not_run "before" do
+      assert_no_switch(:failover_ip => failover_ip, :to => "3.3.3.3") { failover_ip.switch_ips }
+    end
+
+    assert_hooks_do_not_run "after" do
+      assert_no_switch(:failover_ip => failover_ip, :to => "3.3.3.3") { failover_ip.switch_ips }
+    end
+  end
+
   def test_check_with_failover
     failover_ip = FailoverIp.new(:base_url => "https://robot-ws.your-server.de", :basic_auth => { :username => "username", :password => "password" }, :failover_ip => "0.0.0.0",
       :ping_ip => "1.1.1.1", :ips => [{ :ping => "1.1.1.1", :target => "2.2.2.2" }, { :ping => "127.0.0.1", :target => "3.3.3.3" }])

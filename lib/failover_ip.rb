@@ -4,7 +4,7 @@ require "httparty"
 require "lib/hooks"
 
 class FailoverIp
-  attr_accessor :base_url, :basic_auth, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries, :force_down, :only_once
+  attr_accessor :base_url, :basic_auth, :failover_ip, :ping_ip, :ips, :interval, :timeout, :tries, :force_down, :only_once, :dry
 
   def ping(ip = ping_ip)
     tries.times.any? do |i|
@@ -33,9 +33,12 @@ class FailoverIp
 
     raise unless response.success?
 
-    response.parsed_response["failover"]["active_server_ip"]
+    active_server_ip = response.parsed_response["failover"]["active_server_ip"]
+    $logger.info "Fetched ip of active server: #{active_server_ip}"
+    active_server_ip
   rescue
-    $logger.error "Unable to retrieve the active server ip for #{failover_ip}"
+    $logger.error "Unable to retrieve the active server ip for #{failover_ip} from #{base_url}/failover/#{failover_ip}"
+    $logger.error "Response from Hetzner Robot API was: #{response}"
 
     nil
   end
@@ -55,7 +58,12 @@ class FailoverIp
       (ips.size - 1).times do |i|
         ip = ips[(index + i + 1) % ips.size]
 
-        return ip if ping(ip[:ping])
+        if ping(ip[:ping])
+          return ip
+        else
+          $logger.info "Not selecting #{ip[:target]} to switch to since it doesn't respond to ping on #{ip[:ping]}"
+        end
+
       end
     end
 
@@ -70,18 +78,25 @@ class FailoverIp
 
       old_target = current_target
 
-      Hooks.run_before failover_ip, old_target, new_ip[:target]
+      Hooks.run_before failover_ip, old_target, new_ip[:target], dry
 
-      raise unless HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth).success?
+      if dry
+        $logger.info "Dry run: would have switched #{failover_ip} to #{new_ip[:target]}"
+      else
+        response = HTTParty.post("#{base_url}/failover/#{failover_ip}", :body => { :active_server_ip => new_ip[:target] }, :basic_auth => basic_auth)
+        raise unless response.success?
+        $logger.info "Switch #{failover_ip} to #{new_ip[:target]} completed"
+      end
 
-      Hooks.run_after failover_ip, old_target, new_ip[:target]
+      Hooks.run_after failover_ip, old_target, new_ip[:target], dry
 
       return true
     end
 
     false
   rescue
-    $logger.error "Unable to set a new active server ip for #{failover_ip}"
+    $logger.error "Unable to set #{new_ip[:target]} as new active server ip for #{failover_ip} via POST to #{base_url}/failover/#{failover_ip} with username #{basic_auth[:username]}"
+    $logger.error "Response from Hetzner Robot API was: #{response}"
 
     false
   end
@@ -97,6 +112,7 @@ class FailoverIp
     self.tries = options[:tries] || 3
     self.force_down = options[:force_down] || false
     self.only_once = options[:only_once] || false
+    self.dry = options[:dry] || false
   end
 
   def responsible_for?(ip)
@@ -112,7 +128,7 @@ class FailoverIp
       if responsible_for?(current)
         switch_ips
       else
-        $logger.info "Not responsible for #{current}"
+        $logger.info "Not responsible for IP #{current}"
       end
 
       false
