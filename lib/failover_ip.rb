@@ -95,7 +95,7 @@ class FailoverIp
 
     false
   rescue
-    $logger.error "Unable to set #{new_ip[:target]} as new active server ip for #{failover_ip} via POST to #{base_url}/failover/#{failover_ip}, with :basic_auth => #{basic_auth}"
+    $logger.error "Unable to set #{new_ip[:target]} as new active server ip for #{failover_ip} via POST to #{base_url}/failover/#{failover_ip} with username #{basic_auth[:username]}"
     $logger.error "Response from Hetzner Robot API was: #{response}"
 
     false
